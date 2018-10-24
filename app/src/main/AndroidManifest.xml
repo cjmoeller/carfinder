@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="carfinder.uni_oldenburg.de.carfinder">
+    package="de.uni_oldenburg.carfinder">
 
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <application
@@ -10,14 +10,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="de.uni_oldenburg.carfinder.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="ActivityTransitionChangeReceiver">
+        <receiver android:name="de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver">
             <intent-filter>
                 <action android:name="de.uni_oldenburg.carfinder.TRANSITION">
                 </action>

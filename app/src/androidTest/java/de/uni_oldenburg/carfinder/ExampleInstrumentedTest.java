@@ -1,4 +1,4 @@
-package carfinder.uni_oldenburg.de.carfinder;
+package de.uni_oldenburg.carfinder;
 
 import android.content.Context;
 import androidx.test.InstrumentationRegistry;
