@@ -36,29 +36,10 @@
         android:orientation="vertical"
         android:padding="5dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="64dp"
+        app:behavior_peekHeight="70dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        <include layout="@layout/fragment_existing"></include>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@android:style/TextAppearance.Material.Headline"
-            android:text="Parkplatz" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/darker_gray"
-            android:text="Musteradresse 42, 12345 Musterstadt" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:background="#000"
-            android:foreground="?attr/selectableItemBackground"
-            android:text="PARKPLATZ SPEICHERN"
-            android:textColor="#fff" />
 
     </LinearLayout>
     <!-- Adding bottom sheet after main content -->
