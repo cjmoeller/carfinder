@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#efefef"
-    tools:context="de.uni_oldenburg.carfinder.MainActivity">
+    tools:context="de.uni_oldenburg.carfinder.activities.MainActivity">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context="de.uni_oldenburg.carfinder.MainActivity"
+        tools:context="de.uni_oldenburg.carfinder.activities.MainActivity"
         tools:showIn="@layout/activity_main">
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -23,7 +23,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginBottom="8dp"
-            tools:context=".MainActivity" />
+            tools:context=".activities.MainActivity" />
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

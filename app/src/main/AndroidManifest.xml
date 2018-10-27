@@ -13,7 +13,7 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD3T_RlOwz_oWjdH4LtQHMdKfRT8Nq_oCA"/>
-        <activity android:name="de.uni_oldenburg.carfinder.MainActivity">
+        <activity android:name="de.uni_oldenburg.carfinder.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

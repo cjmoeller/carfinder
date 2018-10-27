@@ -1,4 +1,4 @@
-package de.uni_oldenburg.carfinder;
+package de.uni_oldenburg.carfinder.activities;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+import de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver;
+import de.uni_oldenburg.carfinder.R;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 

@@ -9,6 +9,7 @@ import com.google.android.gms.location.ActivityTransitionResult;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import de.uni_oldenburg.carfinder.activities.MainActivity;
 
 public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
 

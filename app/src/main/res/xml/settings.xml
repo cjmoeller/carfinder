@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Allgemeine Einstellungen"
+        android:key="pref_key_storage_settings">
+        <CheckBoxPreference
+            android:key="pref_key_auto_recognition"
+            android:summary="Nutzt Bewegungsprofil um das Parken zu erkennen"
+            android:title="Automatische Parkerkennung"
+            android:defaultValue="false" />
+        <Preference
+            android:key="pref_key_sms_delete_limit"
+            android:summary="Steuern welche Benachrichtigungen gesendet werden"
+            android:title="Benachrichtigungen" />
+        <Preference
+            android:key="pref_key_mms_delete_limit"
+            android:summary="Erkennung vom Parken durch Bluetooth-Überwachung"
+            android:title="Bluetooth"  />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Weitere Einstellungen"
+        android:key="pref_key_storage_settings">
+        <Preference
+            android:key="pref_key_mms_delete_todo"
+            android:summary="Weitere sinnvolle Einstellungen"
+            android:title="ToDo"  />
+    </PreferenceCategory>
+
+</PreferenceScreen>
