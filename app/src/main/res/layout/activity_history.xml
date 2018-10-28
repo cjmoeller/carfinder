@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:textAppearance="@android:style/TextAppearance.Material.Headline"
+        android:text="Verlauf" />
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/history"
+        android:name="de.uni_oldenburg.carfinder.fragments.HistoryListFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        tools:context=".activities.HistoryActivity" />
+</LinearLayout>
