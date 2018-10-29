@@ -1,11 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#efefef"
     tools:context="de.uni_oldenburg.carfinder.activities.MainActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+    </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,6 +28,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context="de.uni_oldenburg.carfinder.activities.MainActivity"
         tools:showIn="@layout/activity_main">
+
         <fragment xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/map"
@@ -31,14 +44,15 @@
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="16dp"
         android:background="#fff"
+        android:elevation="16dp"
         android:orientation="vertical"
         android:padding="5dp"
         app:behavior_hideable="true"
         app:behavior_peekHeight="70dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-        <include layout="@layout/fragment_new"></include>
+
+        <include layout="@layout/fragment_existing"></include>
 
 
     </LinearLayout>

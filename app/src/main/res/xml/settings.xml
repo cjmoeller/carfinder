@@ -19,7 +19,7 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Weitere Einstellungen"
-        android:key="pref_key_storage_settings">
+        android:key="pref_key_other_settings">
         <Preference
             android:key="pref_key_mms_delete_todo"
             android:summary="Weitere sinnvolle Einstellungen"
