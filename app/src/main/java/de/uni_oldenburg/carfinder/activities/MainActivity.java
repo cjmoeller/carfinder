@@ -32,8 +32,6 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.util.Constants;
@@ -62,7 +60,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.createNotificationChannel();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
     }
+
 
     /**
      * Requests Activity Recognition Updates. See <a href="https://developers.google.com/android/reference/com/google/android/gms/location/ActivityRecognitionClient.html#requestActivityUpdates(long,%20android.app.PendingIntent">Google API Reference</a>
