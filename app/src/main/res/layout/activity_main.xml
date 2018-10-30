@@ -52,7 +52,7 @@
         app:behavior_peekHeight="70dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-        <include layout="@layout/fragment_existing"></include>
+        <include layout="@layout/fragment_new"></include>
 
 
     </LinearLayout>

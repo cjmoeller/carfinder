@@ -35,6 +35,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="de.uni_oldenburg.carfinder.activities.MainActivity" />
         </activity>
+        <activity android:name=".activities.DetailsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="de.uni_oldenburg.carfinder.activities.MainActivity" />
+        </activity>
 
         <receiver android:name="de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver">
             <intent-filter>

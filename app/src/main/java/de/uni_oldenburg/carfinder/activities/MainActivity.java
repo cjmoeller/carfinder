@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.location.ActivityRecognition;
@@ -25,19 +25,24 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.util.Constants;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    public static final String CHANNEL_ID = "62387";
+
     private GoogleMap mMap;
+    private BottomSheetBehavior<LinearLayout> sheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
+
+        this.initializeBottomSheetMenu();
+
+        if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
+            this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        }
 
         this.requestActivityTransitionUpdates(this);
         this.createNotificationChannel();
@@ -115,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            NotificationChannel channel = new NotificationChannel(Constants.NOTIFICATION_CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
@@ -159,5 +170,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+
+    public void initializeBottomSheetMenu() {
+        LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+        sheetBehavior.setHideable(false);
+    }
+
 
 }
