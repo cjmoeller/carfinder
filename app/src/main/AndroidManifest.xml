@@ -38,7 +38,7 @@
         <activity android:name=".activities.DetailsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="de.uni_oldenburg.carfinder.activities.MainActivity" />
+                android:value="de.uni_oldenburg.carfinder.activities.HistoryActivity" />
         </activity>
 
         <receiver android:name="de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver">
