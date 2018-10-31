@@ -34,6 +34,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
+import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -60,6 +62,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.createNotificationChannel();
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        //ParkingSpot test = new ParkingSpot(System.currentTimeMillis(), "Parkplatzname", "Links neben LIDL", null, true, -1, 53, 8, "Adresse 23, 27123 Stadt");
+        //ParkingSpotDatabaseManager.insertParkingSpot(test, this);
 
 
     }

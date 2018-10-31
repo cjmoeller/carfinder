@@ -44,8 +44,12 @@ public class ParkingSpot {
      * Address of the parking spot.
      */
     private String address;
+    /**
+     * The user defined name of the parking spot.
+     */
+    private String name;
 
-    public ParkingSpot(long timestamp, String description, String imageLocation, boolean isCurrentlyUsed, long expiresAt, double latitude, double longitude, String address) {
+    public ParkingSpot(long timestamp, String name, String description, String imageLocation, boolean isCurrentlyUsed, long expiresAt, double latitude, double longitude, String address) {
         this.timestamp = timestamp;
         this.description = description;
         this.imageLocation = imageLocation;
@@ -53,6 +57,7 @@ public class ParkingSpot {
         this.expiresAt = expiresAt;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.name = name;
         this.address = address;
     }
 
@@ -126,5 +131,9 @@ public class ParkingSpot {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getName() {
+        return name;
     }
 }

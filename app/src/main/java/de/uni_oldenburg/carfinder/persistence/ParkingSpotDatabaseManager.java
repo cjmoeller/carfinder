@@ -3,6 +3,9 @@ package de.uni_oldenburg.carfinder.persistence;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import java.util.List;
+
+import androidx.arch.core.util.Function;
 import androidx.room.Room;
 import de.uni_oldenburg.carfinder.util.Constants;
 
@@ -20,7 +23,7 @@ public class ParkingSpotDatabaseManager {
         return instance;
     }
 
-    public static void insertParkingSpot(final ParkingSpot parkingSpot, final Context context){
+    public static void insertParkingSpot(final ParkingSpot parkingSpot, final Context context) {
         AsyncTask task = new AsyncTask() {
             @Override
             protected Object doInBackground(Object[] objects) {
@@ -28,6 +31,11 @@ public class ParkingSpotDatabaseManager {
                 return null;
             }
         };
+        task.execute();
+    }
+
+    public static void getAllParkingSpots(final Context context, Function<List<ParkingSpot>, Void> callback) {
+        LoadParkingSpotsTask task = new LoadParkingSpotsTask(context, callback);
         task.execute();
     }
 }

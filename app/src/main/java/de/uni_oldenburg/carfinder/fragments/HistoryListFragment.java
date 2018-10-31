@@ -12,18 +12,25 @@ import java.util.List;
 
 import androidx.fragment.app.ListFragment;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
+import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 
 public class HistoryListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Each row in the list stores country name, currency and flag
+        
+        ParkingSpotDatabaseManager.getAllParkingSpots(getContext(), data -> onDataLoaded(data));
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    private Void onDataLoaded(List<ParkingSpot> data) {
         List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
 
-        for (int i = 0; i < 5; i++) {
+        for (ParkingSpot parkingSpot : data) {
             HashMap<String, String> hm = new HashMap<String, String>();
-            hm.put("title", "Parkplatzname");
-            hm.put("address", "Adresse 1, 20123 Stadt");
+            hm.put("title", parkingSpot.getName());
+            hm.put("address", parkingSpot.getAddress());
             aList.add(hm);
         }
 
@@ -38,7 +45,6 @@ public class HistoryListFragment extends ListFragment {
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listitem_history, from, to);
 
         setListAdapter(adapter);
-
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return null;
     }
 }
