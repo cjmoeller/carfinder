@@ -45,22 +45,23 @@
                 android:id="@+id/button3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:background="#33f"
                 android:drawableLeft="@drawable/car_white"
                 android:drawablePadding="2dp"
                 android:padding="7dp"
                 android:text="Parken"
                 android:textColor="#fff"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
-    <include layout="@layout/fragment_create"></include>
+    <!-- For more clarity -->
+    <include layout="@layout/layout_create"></include>
 
 </LinearLayout>

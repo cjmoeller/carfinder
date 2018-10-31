@@ -9,6 +9,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -34,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
@@ -60,8 +63,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         this.requestActivityTransitionUpdates(this);
         this.createNotificationChannel();
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
+
 
         //ParkingSpot test = new ParkingSpot(System.currentTimeMillis(), "Parkplatzname", "Links neben LIDL", null, true, -1, 53, 8, "Adresse 23, 27123 Stadt");
         //ParkingSpotDatabaseManager.insertParkingSpot(test, this);
@@ -183,5 +190,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         sheetBehavior.setHideable(false);
     }
 
+
+    public Void onParkingSpotDatabaseLoaded(List<ParkingSpot> data) {
+        ParkingSpot currentSpot = null;
+        for (ParkingSpot spot : data) {
+            if (spot.isCurrentlyUsed()) {
+                currentSpot = spot;
+                break;
+            }
+        }
+        if (currentSpot != null) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, currentSpot);
+            ExistingParkingSpotFragment existingParkingSpotFragment = new ExistingParkingSpotFragment();
+            existingParkingSpotFragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
+        }
+
+        return null;
+    }
 
 }

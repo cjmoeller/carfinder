@@ -1,5 +1,7 @@
 package de.uni_oldenburg.carfinder.persistence;
 
+import java.io.Serializable;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -7,7 +9,7 @@ import androidx.room.PrimaryKey;
  * Represents a Parking Spot.
  */
 @Entity(tableName = "parking_spots")
-public class ParkingSpot {
+public class ParkingSpot implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
