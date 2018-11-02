@@ -9,8 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -24,8 +22,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -34,18 +30,24 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
+import de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
+import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
+import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     private GoogleMap mMap;
     private BottomSheetBehavior<LinearLayout> sheetBehavior;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +63,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
 
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
         this.requestActivityTransitionUpdates(this);
         this.createNotificationChannel();
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
+        if (viewModel.alreadyCheckedDatabase()) {
+            this.loadExistingParkingSpotFragment(viewModel.getCurrentSpot());
+        } else {
+            ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
 
+        }
 
         //ParkingSpot test = new ParkingSpot(System.currentTimeMillis(), "Parkplatzname", "Links neben LIDL", null, true, -1, 53, 8, "Adresse 23, 27123 Stadt");
         //ParkingSpotDatabaseManager.insertParkingSpot(test, this);
@@ -91,21 +99,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ActivityTransitionRequest request = buildTransitionRequest();
         Task task = ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent);
-        task.addOnSuccessListener(
-                new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {
-                        Toast.makeText(MainActivity.this, "Now Listening for Activity Recognition Updates", Toast.LENGTH_LONG).show();
-                    }
-
-                });
         task.addOnFailureListener(
-                new OnFailureListener() {
-                    @Override
-                    public void onFailure(Exception e) {
-                        Toast.makeText(MainActivity.this, "Failed to start Listening for Activity Recognition Updates", Toast.LENGTH_LONG).show();
-                    }
-                });
+                e -> Toast.makeText(MainActivity.this, "Automatic parking spot detection is not available on your device.", Toast.LENGTH_LONG).show());
 
     }
 
@@ -150,10 +145,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         // Add a marker in Germany, and move the camera.
-        LatLng sydney = new LatLng(52, 8);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Germany"));
+        LatLng sydney = new LatLng(53,8);
+        mMap.addMarker(new MarkerOptions().position(sydney).title("Parkplatz"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
@@ -199,15 +193,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             }
         }
+        viewModel.setCurrentSpot(currentSpot);
+        viewModel.setCheckedDatabase(true);
         if (currentSpot != null) {
-            Bundle bundle = new Bundle();
-            bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, currentSpot);
-            ExistingParkingSpotFragment existingParkingSpotFragment = new ExistingParkingSpotFragment();
-            existingParkingSpotFragment.setArguments(bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
+            loadExistingParkingSpotFragment(currentSpot);
+        } else {
+            loadNewParkingSpotFragment();
         }
 
         return null;
+    }
+
+    /**
+     * Loads the fragment to display details about an existing parking spot.
+     * @param currentSpot
+     */
+    private void loadExistingParkingSpotFragment(ParkingSpot currentSpot) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, currentSpot);
+        ExistingParkingSpotFragment existingParkingSpotFragment = new ExistingParkingSpotFragment();
+        existingParkingSpotFragment.setArguments(bundle);
+        getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
+    }
+
+    /**
+     * Loads the fragment to create a new parking spot.
+     */
+    private void loadNewParkingSpotFragment(){
+        NewParkingSpotFragment newParkingSpotFragment = new NewParkingSpotFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
+
     }
 
 }

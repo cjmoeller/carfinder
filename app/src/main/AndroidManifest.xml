@@ -3,6 +3,7 @@
     package="de.uni_oldenburg.carfinder">
 
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -41,13 +42,14 @@
                 android:value="de.uni_oldenburg.carfinder.activities.HistoryActivity" />
         </activity>
 
-        <receiver android:name="de.uni_oldenburg.carfinder.ActivityTransitionChangeReceiver">
+        <receiver android:name="de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver">
             <intent-filter>
                 <action android:name="de.uni_oldenburg.carfinder.TRANSITION"></action>
             </intent-filter>
 
         </receiver>
 
+        <service android:name=".location.ForegroundLocationService" />
     </application>
 
 </manifest>
