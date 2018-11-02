@@ -6,18 +6,24 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionRequest;
 import com.google.android.gms.location.DetectedActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -34,9 +40,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
 import de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver;
+import de.uni_oldenburg.carfinder.location.geocoding.FetchAddressIntentService;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
@@ -48,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private BottomSheetBehavior<LinearLayout> sheetBehavior;
     private MainViewModel viewModel;
+    private ExistingParkingSpotFragment existingParkingSpotFragment;
+    private ProgressBar progressBar;
+    private NewParkingSpotFragment newParkingSpotFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        this.initializeBottomSheetMenu();
+        this.initUI();
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
         //MainActivity was started from "automatically detected parking spot" notification.
@@ -76,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
-
 
 
         this.requestActivityTransitionUpdates(this);
@@ -159,10 +169,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker in Germany, and move the camera.
-        LatLng sydney = new LatLng(this.viewModel.getParkingSpot().getLatitude(),this.viewModel.getParkingSpot().getLongitude());
-        mMap.addMarker(new MarkerOptions().position(sydney).title(this.viewModel.getParkingSpot().getName()));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        displayLocation();
     }
 
     @Override
@@ -199,6 +206,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    /**
+     * Called when the database was queried for parking spot data.
+     * @param data
+     * @return
+     */
     public Void onParkingSpotDatabaseLoaded(List<ParkingSpot> data) {
         ParkingSpot currentSpot = null;
         for (ParkingSpot spot : data) {
@@ -210,8 +222,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         viewModel.setCheckedDatabase(true);
         if (currentSpot != null) {
             viewModel.setParkingSpot(currentSpot);
+            viewModel.setParkingSpotSaved(true);
             loadExistingParkingSpotFragment(currentSpot);
         } else {
+            viewModel.setParkingSpotSaved(false);
             loadNewParkingSpotFragment(this.viewModel.getParkingSpot());
         }
 
@@ -220,28 +234,93 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Loads the fragment to display details about an existing parking spot.
+     *
      * @param currentSpot
      */
     private void loadExistingParkingSpotFragment(ParkingSpot currentSpot) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, currentSpot);
-        ExistingParkingSpotFragment existingParkingSpotFragment = new ExistingParkingSpotFragment();
+        existingParkingSpotFragment = new ExistingParkingSpotFragment();
         existingParkingSpotFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
     }
 
     /**
      * Loads the fragment to create a new parking spot.
-     * @param newSpot
-     *      Pass a ParkingSpot with the current Position/Address
+     *
+     * @param newSpot Pass a ParkingSpot with the current Position/Address
      */
-    private void loadNewParkingSpotFragment(ParkingSpot newSpot){
+    private void loadNewParkingSpotFragment(ParkingSpot newSpot) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, newSpot);
-        NewParkingSpotFragment newParkingSpotFragment = new NewParkingSpotFragment();
+        newParkingSpotFragment = new NewParkingSpotFragment();
         newParkingSpotFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
 
     }
+
+    private void initUI() {
+        this.progressBar = findViewById(R.id.progressBar);
+        this.initializeBottomSheetMenu();
+    }
+
+
+    /**
+     * Call this method to display the current location including the address.
+     */
+    private void displayLocation() {
+        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        try {
+            Task locationTask = fusedLocationClient.getLastLocation();
+            locationTask.addOnCompleteListener(this, task -> {
+                if (task.isSuccessful()) {
+                    // Set the map's camera position to the current location of the device.
+                    Location lastKnownLocation = (Location) task.getResult();
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                            new LatLng(lastKnownLocation.getLatitude(),
+                                    lastKnownLocation.getLongitude()), Constants.DEFAULT_ZOOM));
+                    // Add a marker in Germany, and move the camera.
+                    LatLng position = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(position).title("Standort"));
+                    loadAddressFromLocation(lastKnownLocation);
+                } else {
+                    Log.e(Constants.LOG_TAG, "Exception: %s", task.getException());
+                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+                }
+            });
+        } catch (SecurityException e) {
+            Log.e(Constants.LOG_TAG, "No GPS Permission");
+        }
+    }
+
+    /**
+     * Starts an FetchAddressIntentService to receive the Address of a given location.
+     * @param lastKnownLocation
+     */
+    private void loadAddressFromLocation(Location lastKnownLocation){
+        AddressStringResultReceiver resultReceiver = new AddressStringResultReceiver(data -> this.onAddressResultReceived(data, lastKnownLocation));
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.ADDRESS_RECEIVER, resultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, lastKnownLocation);
+        startService(intent);
+    }
+
+    /**
+     * Called when an address result for the current position is received
+     * @param address
+     * @param location
+     * @return
+     */
+    private Void onAddressResultReceived(String address, Location location){
+        //replaces the loader with the new parkin Spot fragment.
+        this.progressBar.setVisibility(View.INVISIBLE);
+        this.viewModel.getParkingSpot().setAddress(address);
+        this.viewModel.getParkingSpot().setLatitude(location.getLatitude());
+        this.viewModel.getParkingSpot().setLongitude(location.getLongitude());
+        this.loadNewParkingSpotFragment(this.viewModel.getParkingSpot());
+        return null;
+    }
+
 
 }

@@ -11,35 +11,41 @@
         android:orientation="horizontal"
         android:layout_marginBottom="15dp">
 
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-            <TextView
-                android:id="@+id/newAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawablePadding="5dp"
-                android:text="Adresse 1, 12345 Stadt"
-                android:textAppearance="@android:style/TextAppearance.Material.Headline" />
-
-            <TextView
-                android:id="@+id/newLatLon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="52.17232° N, 8.982736° O" />
-
-
-        </LinearLayout>
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <TextView
+                    android:id="@+id/newAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawablePadding="5dp"
+                    android:maxLines="1"
+                    android:text="Adresse 1, 12345 Stadt"
+                    android:textColor="#000"
+                    android:textSize="25dp" />
+
+                <TextView
+                    android:id="@+id/newLatLon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="52.17232° N, 8.982736° O" />
+
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/button3"

@@ -17,6 +17,7 @@ public class NewParkingSpotFragment extends Fragment {
     private TextView newLatLong;
     private ParkingSpot parkingSpot;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -40,5 +41,6 @@ public class NewParkingSpotFragment extends Fragment {
         newAddress.setText(this.parkingSpot.getAddress());
         newLatLong.setText(this.parkingSpot.getLatitude() + ", " + this.parkingSpot.getLongitude());
     }
+
 
 }

@@ -50,6 +50,7 @@
         </receiver>
 
         <service android:name=".location.ForegroundLocationService" />
+        <service android:name=".location.geocoding.FetchAddressIntentService" />
     </application>
 
 </manifest>

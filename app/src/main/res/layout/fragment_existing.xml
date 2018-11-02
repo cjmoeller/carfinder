@@ -12,35 +12,45 @@
         android:orientation="horizontal">
 
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-
-            <TextView
-                android:id="@+id/existingName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:drawableLeft="@drawable/car"
-                android:drawablePadding="5dp"
-                android:text="Parkplatz Name"
-                android:textAppearance="@android:style/TextAppearance.Material.Headline" />
-
-            <TextView
-                android:id="@+id/existingAddress"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Adresse 1, 12345 Stadt" />
-
-
-        </LinearLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <TextView
+                    android:id="@+id/existingName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:drawableLeft="@drawable/car"
+                    android:drawablePadding="5dp"
+                    android:text="Parkplatz Name"
+                    android:textAppearance="@android:style/TextAppearance.Material.Headline" />
+
+                <TextView
+                    android:id="@+id/existingAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Adresse 1, 12345 Stadt" />
+
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/button3"
