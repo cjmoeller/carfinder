@@ -35,13 +35,8 @@
                 android:id="@+id/textView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Adresse 42" />
+                android:text="Geparkt: 23.12.2018, 9:34 Uhr" />
 
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="26125 Oldenburg" />
 
         </LinearLayout>
 

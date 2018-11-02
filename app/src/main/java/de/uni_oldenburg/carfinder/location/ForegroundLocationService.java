@@ -4,8 +4,11 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -13,6 +16,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
@@ -56,7 +65,9 @@ public class ForegroundLocationService extends Service {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         LocationRequest request = new LocationRequest();
-        request.setMaxWaitTime(10 * 1000);
+        request.setInterval(10000); // 10s interval
+        request.setFastestInterval(10000);
+
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         LocationCallback locationCallback = new LocationCallback() {
@@ -78,23 +89,70 @@ public class ForegroundLocationService extends Service {
     }
 
     private void onLocationFinished(Location location) {
-        Intent notifyIntent = new Intent(this, MainActivity.class);
-        notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);
-        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Address address = this.getAddressFromLocation(location);
+        ArrayList<String> addressFragments = new ArrayList<>();
 
-        PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
-        );
+        if (address != null) {
+            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.car)
-                .setContentTitle("Parkplatz automatisch erkannt.")
-                .setContentText("Haben Sie an diesem Ort geparkt:" + location.getLatitude() + "," + location.getLongitude())
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(notifyPendingIntent);
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+            String addressString = TextUtils.join(System.getProperty("line.separator"),
+                    addressFragments);
 
-        notificationManager.notify(Constants.NOTIFICATION_ID_PARKING_DETECTED, mBuilder.build());
-        stopForeground(true);
+
+            Intent notifyIntent = new Intent(this, MainActivity.class);
+            notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);
+            notifyIntent.putExtra(Constants.ADDRESS_EXTRA, address);
+            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                    this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.car)
+                    .setContentTitle("Parkplatz automatisch erkannt.")
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText("Haben Sie an diesem Ort geparkt: " + addressString + "?"))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(notifyPendingIntent);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+            notificationManager.notify(Constants.NOTIFICATION_ID_PARKING_DETECTED, mBuilder.build());
+            stopForeground(true);
+        }
+    }
+
+    /**
+     * Retrieves an Address from a location via Reverse Geocoding.
+     */
+    private Address getAddressFromLocation(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocation(
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    1);
+        } catch (IOException ioException) {
+            Log.e(Constants.LOG_TAG, "IO Error", ioException);
+        } catch (IllegalArgumentException illegalArgumentException) {
+
+            Log.e(Constants.LOG_TAG, "Invalid Lat/Long" + ". " +
+                    "Latitude = " + location.getLatitude() +
+                    ", Longitude = " +
+                    location.getLongitude(), illegalArgumentException);
+        }
+
+        if (addresses == null || addresses.size() == 0) {
+            Log.e(Constants.LOG_TAG, "No Address found.");
+        } else {
+            Address address = addresses.get(0);
+            return address;
+        }
+        return null;
     }
 }

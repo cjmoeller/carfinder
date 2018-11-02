@@ -6,12 +6,14 @@ import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 public class MainViewModel extends ViewModel {
 
     private boolean checkedDatabase;
-    private ParkingSpot currentSpot;
+    private ParkingSpot parkingSpot;
 
-    public MainViewModel(){
-        currentSpot = null;
+    public MainViewModel() {
+        parkingSpot = new ParkingSpot(0, "empty", "empty", null, false, -1, 0, 0, "empty");
         checkedDatabase = false;
     }
+
+
 
     public boolean alreadyCheckedDatabase() {
         return checkedDatabase;
@@ -21,11 +23,11 @@ public class MainViewModel extends ViewModel {
         this.checkedDatabase = checkedDatabase;
     }
 
-    public ParkingSpot getCurrentSpot() {
-        return currentSpot;
+    public ParkingSpot getParkingSpot() {
+        return parkingSpot;
     }
 
-    public void setCurrentSpot(ParkingSpot currentSpot) {
-        this.currentSpot = currentSpot;
+    public void setParkingSpot(ParkingSpot parkingSpot) {
+        this.parkingSpot = parkingSpot;
     }
 }

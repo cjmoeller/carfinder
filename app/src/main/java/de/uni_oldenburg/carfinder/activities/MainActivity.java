@@ -5,8 +5,10 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -30,13 +32,11 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
-import de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
-import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
+import de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
@@ -58,12 +58,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(myToolbar);
 
         this.initializeBottomSheetMenu();
+        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
+        //MainActivity was started from "automatically detected parking spot" notification.
         if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
+            //Address from the ForegroundLocationService.
+            Address address = getIntent().getParcelableExtra(Constants.ADDRESS_EXTRA);
+            ArrayList<String> addressFragments = new ArrayList<>();
+            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
+            String addressString = TextUtils.join(System.getProperty("line.separator"),
+                    addressFragments);
+            this.viewModel.getParkingSpot().setAddress(addressString);
+            this.viewModel.getParkingSpot().setLatitude(address.getLatitude());
+            this.viewModel.getParkingSpot().setLongitude(address.getLongitude());
+
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
 
         this.requestActivityTransitionUpdates(this);
         this.createNotificationChannel();
@@ -72,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         if (viewModel.alreadyCheckedDatabase()) {
-            this.loadExistingParkingSpotFragment(viewModel.getCurrentSpot());
+            this.loadExistingParkingSpotFragment(viewModel.getParkingSpot());
         } else {
             ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
 
@@ -146,8 +160,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         // Add a marker in Germany, and move the camera.
-        LatLng sydney = new LatLng(53,8);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Parkplatz"));
+        LatLng sydney = new LatLng(this.viewModel.getParkingSpot().getLatitude(),this.viewModel.getParkingSpot().getLongitude());
+        mMap.addMarker(new MarkerOptions().position(sydney).title(this.viewModel.getParkingSpot().getName()));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
@@ -193,12 +207,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 break;
             }
         }
-        viewModel.setCurrentSpot(currentSpot);
         viewModel.setCheckedDatabase(true);
         if (currentSpot != null) {
+            viewModel.setParkingSpot(currentSpot);
             loadExistingParkingSpotFragment(currentSpot);
         } else {
-            loadNewParkingSpotFragment();
+            loadNewParkingSpotFragment(this.viewModel.getParkingSpot());
         }
 
         return null;
@@ -218,9 +232,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Loads the fragment to create a new parking spot.
+     * @param newSpot
+     *      Pass a ParkingSpot with the current Position/Address
      */
-    private void loadNewParkingSpotFragment(){
+    private void loadNewParkingSpotFragment(ParkingSpot newSpot){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, newSpot);
         NewParkingSpotFragment newParkingSpotFragment = new NewParkingSpotFragment();
+        newParkingSpotFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
 
     }

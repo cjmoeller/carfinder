@@ -7,4 +7,6 @@ public class Constants {
     public static final String PARKING_SPOT_OBJECT_BUNDLE = "parkingSpot";
     public static final int NOTIFICATION_ID_FOREGROUND_LOCATION = 15;
     public static final int NOTIFICATION_ID_PARKING_DETECTED = 16;
+    public static final String LOG_TAG = "default";
+    public static final String ADDRESS_EXTRA = "ADDRESS_EXTRA";
 }
