@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,65 +13,56 @@
         android:orientation="horizontal">
 
 
+        <LinearLayout
+            android:id="@+id/linearLayout12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:gravity="clip_horizontal"
+            android:orientation="vertical">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/existingName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/button3"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/car"
+                android:drawablePadding="5dp"
+                android:text="Parkplatz Name"
+                android:textAppearance="@android:style/TextAppearance.Material.Headline" />
+
+            <TextView
+                android:id="@+id/existingAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Adresse 1, 12345 Stadt" />
 
 
-                <TextView
-                    android:id="@+id/existingName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:drawableLeft="@drawable/car"
-                    android:drawablePadding="5dp"
-                    android:text="Parkplatz Name"
-                    android:textAppearance="@android:style/TextAppearance.Material.Headline" />
+        </LinearLayout>
 
-                <TextView
-                    android:id="@+id/existingAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Adresse 1, 12345 Stadt" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right">
 
-
-            </LinearLayout>
 
             <Button
                 android:id="@+id/button3"
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
+                android:layout_margin="5dp"
                 android:background="#33f"
                 android:drawableLeft="@drawable/compass_outline"
                 android:drawablePadding="2dp"
                 android:padding="7dp"
                 android:text="Navigieren"
-                android:textColor="#fff"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:textColor="#fff" />
 
+        </LinearLayout>
     </LinearLayout>
+
 
     <fragment
         android:id="@+id/fragmentDetails"

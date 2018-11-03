@@ -11,9 +11,11 @@ import org.w3c.dom.Text;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 
 public class ExistingParkingSpotFragment extends Fragment {
 
@@ -23,12 +25,13 @@ public class ExistingParkingSpotFragment extends Fragment {
 
     private TextView existingName;
     private TextView existingAddress;
+    private MainViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Bundle args = getArguments();
-        parkingSpot = (ParkingSpot) args.getSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE);
+        viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+        parkingSpot = viewModel.getParkingSpot();
 
         return inflater.inflate(R.layout.fragment_existing, container, false);
     }

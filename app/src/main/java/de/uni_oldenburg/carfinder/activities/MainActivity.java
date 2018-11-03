@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
         if (viewModel.alreadyCheckedDatabase()) {
-            this.loadExistingParkingSpotFragment(viewModel.getParkingSpot());
+            this.loadExistingParkingSpotFragment();
         } else {
             ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
 
@@ -223,38 +223,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (currentSpot != null) {
             viewModel.setParkingSpot(currentSpot);
             viewModel.setParkingSpotSaved(true);
-            loadExistingParkingSpotFragment(currentSpot);
+            loadExistingParkingSpotFragment();
         } else {
             viewModel.setParkingSpotSaved(false);
-            loadNewParkingSpotFragment(this.viewModel.getParkingSpot());
         }
 
         return null;
     }
 
     /**
-     * Loads the fragment to display details about an existing parking spot.
+     * Loads the fragment to display details about an existing parking spot (viewmodel).
      *
-     * @param currentSpot
      */
-    private void loadExistingParkingSpotFragment(ParkingSpot currentSpot) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, currentSpot);
+    private void loadExistingParkingSpotFragment() {
         existingParkingSpotFragment = new ExistingParkingSpotFragment();
-        existingParkingSpotFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
     }
 
     /**
      * Loads the fragment to create a new parking spot.
      *
-     * @param newSpot Pass a ParkingSpot with the current Position/Address
      */
-    private void loadNewParkingSpotFragment(ParkingSpot newSpot) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(Constants.PARKING_SPOT_OBJECT_BUNDLE, newSpot);
+    private void loadNewParkingSpotFragment() {
         newParkingSpotFragment = new NewParkingSpotFragment();
-        newParkingSpotFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
 
     }
@@ -318,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.viewModel.getParkingSpot().setAddress(address);
         this.viewModel.getParkingSpot().setLatitude(location.getLatitude());
         this.viewModel.getParkingSpot().setLongitude(location.getLongitude());
-        this.loadNewParkingSpotFragment(this.viewModel.getParkingSpot());
+        this.loadNewParkingSpotFragment();
         return null;
     }
 

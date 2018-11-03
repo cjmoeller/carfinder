@@ -49,7 +49,7 @@
         android:orientation="vertical"
         android:padding="5dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="90dp"
+        app:behavior_peekHeight="70dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
