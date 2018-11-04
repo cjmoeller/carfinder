@@ -76,6 +76,8 @@ public class NewParkingSpotFragment extends Fragment {
             } else {
                 this.viewModel.getParkingSpot().setCurrentlyUsed(true);
                 this.viewModel.getParkingSpot().setName(this.parkingSpotName.getText().toString());
+                this.viewModel.getParkingSpot().setDescription("Hier könnte man implementieren, dass der Benutzer auch eine Beschreibung hinzufügen kann. Kann man machen, muss man aber nicht... Deswegen steht jetzt dieser ultrakrasse Text hier! 42");
+                this.viewModel.getParkingSpot().setTimestamp(System.currentTimeMillis());
                 ParkingSpotDatabaseManager.insertParkingSpot(this.viewModel.getParkingSpot(), getActivity());
                 Activity parentActivity = getActivity();
                 if (parentActivity instanceof MainActivity) {

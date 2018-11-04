@@ -25,7 +25,7 @@ public class HistoryListFragment extends ListFragment {
     }
 
     private Void onDataLoaded(List<ParkingSpot> data) {
-        List<HashMap<String, String>> aList = new ArrayList<HashMap<String, String>>();
+        List<HashMap<String, String>> aList = new ArrayList<>();
 
         for (ParkingSpot parkingSpot : data) {
             HashMap<String, String> hm = new HashMap<String, String>();

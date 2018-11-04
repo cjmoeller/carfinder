@@ -14,6 +14,9 @@ import org.w3c.dom.Text;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
@@ -24,8 +27,6 @@ public class ExistingParkingSpotFragment extends Fragment {
 
     private DetailsFragment details;
 
-    private ParkingSpot parkingSpot;
-
     private TextView existingName;
     private TextView existingAddress;
     private MainViewModel viewModel;
@@ -35,17 +36,16 @@ public class ExistingParkingSpotFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        parkingSpot = viewModel.getParkingSpot();
-
         return inflater.inflate(R.layout.fragment_existing, container, false);
     }
 
     @Override
     public void onStart() {
-
-        initializeUI();
         super.onStart();
+        initializeUI();
+
     }
+
 
     private void initializeUI() {
         List<Fragment> children = getChildFragmentManager().getFragments();
@@ -54,6 +54,15 @@ public class ExistingParkingSpotFragment extends Fragment {
                 details = (DetailsFragment) f;
             }
         }
+
+        details.getLifecycle().addObserver(new LifecycleObserver() {
+            @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+            public void detailsFragmentStarted() {
+                details.setData(ExistingParkingSpotFragment.this.viewModel.getParkingSpot());
+
+            }
+        });
+
 
         existingName = getActivity().findViewById(R.id.existingName);
         existingAddress = getActivity().findViewById(R.id.existingAddress);
@@ -66,7 +75,7 @@ public class ExistingParkingSpotFragment extends Fragment {
             startActivity(mapIntent);
         });
 
-        existingName.setText(parkingSpot.getName());
-        existingAddress.setText(parkingSpot.getAddress());
+        existingName.setText(this.viewModel.getParkingSpot().getName());
+        existingAddress.setText(this.viewModel.getParkingSpot().getAddress());
     }
 }
