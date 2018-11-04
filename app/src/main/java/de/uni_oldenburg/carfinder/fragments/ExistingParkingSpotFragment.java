@@ -1,9 +1,12 @@
 package de.uni_oldenburg.carfinder.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -26,6 +29,7 @@ public class ExistingParkingSpotFragment extends Fragment {
     private TextView existingName;
     private TextView existingAddress;
     private MainViewModel viewModel;
+    private Button startNavigation;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +57,15 @@ public class ExistingParkingSpotFragment extends Fragment {
 
         existingName = getActivity().findViewById(R.id.existingName);
         existingAddress = getActivity().findViewById(R.id.existingAddress);
+
+        startNavigation = getActivity().findViewById(R.id.startNavigation);
+        startNavigation.setOnClickListener(v -> {
+            Uri gmmIntentUri = Uri.parse("google.navigation:q=" + this.viewModel.getParkingSpot().getLatitude() + "," + this.viewModel.getParkingSpot().getLongitude() + "&mode=w");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            startActivity(mapIntent);
+        });
+
         existingName.setText(parkingSpot.getName());
         existingAddress.setText(parkingSpot.getAddress());
     }

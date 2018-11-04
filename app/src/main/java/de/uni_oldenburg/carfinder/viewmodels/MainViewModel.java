@@ -1,5 +1,6 @@
 package de.uni_oldenburg.carfinder.viewmodels;
 
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 
@@ -9,12 +10,19 @@ public class MainViewModel extends ViewModel {
     private ParkingSpot parkingSpot;
     private boolean parkingSpotSaved;
 
+    private MutableLiveData<String> currentPositionAddress;
+    private MutableLiveData<Double> currentPositionLat;
+    private MutableLiveData<Double> currentPositionLon;
+
+
     public MainViewModel() {
         parkingSpot = new ParkingSpot(0, "empty", "empty", null, false, -1, 0, 0, "empty");
         checkedDatabase = false;
         parkingSpotSaved = false;
+        currentPositionAddress = new MutableLiveData<>();
+        currentPositionLat = new MutableLiveData<>();
+        currentPositionLon = new MutableLiveData<>();
     }
-
 
 
     public boolean alreadyCheckedDatabase() {
@@ -39,5 +47,17 @@ public class MainViewModel extends ViewModel {
 
     public void setParkingSpotSaved(boolean parkingSpotSaved) {
         this.parkingSpotSaved = parkingSpotSaved;
+    }
+
+    public MutableLiveData<String> getCurrentPositionAddress() {
+        return currentPositionAddress;
+    }
+
+    public MutableLiveData<Double> getCurrentPositionLat() {
+        return currentPositionLat;
+    }
+
+    public MutableLiveData<Double> getCurrentPositionLon() {
+        return currentPositionLon;
     }
 }

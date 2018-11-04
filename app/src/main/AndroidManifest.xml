@@ -3,7 +3,7 @@
     package="de.uni_oldenburg.carfinder">
 
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -32,7 +32,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD3T_RlOwz_oWjdH4LtQHMdKfRT8Nq_oCA" />
 
-        <activity android:name="de.uni_oldenburg.carfinder.activities.MainActivity">
+        <activity
+            android:name="de.uni_oldenburg.carfinder.activities.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

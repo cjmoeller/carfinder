@@ -46,6 +46,8 @@ public class ParkingSpot implements Serializable {
      * Address of the parking spot.
      */
     private String address;
+
+
     /**
      * The user defined name of the parking spot.
      */
@@ -137,5 +139,10 @@ public class ParkingSpot implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

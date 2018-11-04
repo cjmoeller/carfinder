@@ -76,19 +76,19 @@ public class ForegroundLocationService extends Service {
                 if (locationResult == null) {
                     return;
                 }
-                ForegroundLocationService.this.onLocationFinished(locationResult.getLastLocation());
+                ForegroundLocationService.this.onLocationFinished(locationResult.getLastLocation(), this);
             }
         };
 
         try {
             fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
         } catch (SecurityException e) {
-            Log.e("de.uni_oldenburg", "Permission to update location was not given.");
+            Log.e(Constants.LOG_TAG, "Permission to update location was not given.");
         }
         return Service.START_STICKY;
     }
 
-    private void onLocationFinished(Location location) {
+    private void onLocationFinished(Location location, LocationCallback cb) {
         Address address = this.getAddressFromLocation(location);
         ArrayList<String> addressFragments = new ArrayList<>();
 
@@ -121,6 +121,7 @@ public class ForegroundLocationService extends Service {
 
             notificationManager.notify(Constants.NOTIFICATION_ID_PARKING_DETECTED, mBuilder.build());
             stopForeground(true);
+            fusedLocationClient.removeLocationUpdates(cb);
         }
     }
 

@@ -23,6 +23,9 @@ import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionRequest;
 import com.google.android.gms.location.DetectedActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -38,8 +41,10 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
 import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
@@ -169,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        displayLocation();
     }
 
     @Override
@@ -208,6 +212,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Called when the database was queried for parking spot data.
+     *
      * @param data
      * @return
      */
@@ -226,6 +231,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             loadExistingParkingSpotFragment();
         } else {
             viewModel.setParkingSpotSaved(false);
+            displayLocation();
         }
 
         return null;
@@ -233,20 +239,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Loads the fragment to display details about an existing parking spot (viewmodel).
-     *
      */
-    private void loadExistingParkingSpotFragment() {
-        existingParkingSpotFragment = new ExistingParkingSpotFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
+    public void loadExistingParkingSpotFragment() {
+        if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            this.progressBar.setVisibility(View.INVISIBLE);
+            if (this.fusedLocationClient != null) //don't update Position if user has parked
+                this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
+            existingParkingSpotFragment = new ExistingParkingSpotFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, existingParkingSpotFragment).commit();
+        }
+
     }
 
     /**
      * Loads the fragment to create a new parking spot.
-     *
      */
     private void loadNewParkingSpotFragment() {
-        newParkingSpotFragment = new NewParkingSpotFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
+        if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            newParkingSpotFragment = new NewParkingSpotFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
+        }
 
     }
 
@@ -255,19 +267,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.initializeBottomSheetMenu();
     }
 
+    private LocationCallback locationCallback;
+    private FusedLocationProviderClient fusedLocationClient;
 
     /**
      * Call this method to display the current location including the address.
      */
     private void displayLocation() {
-        FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         try {
-            Task locationTask = fusedLocationClient.getLastLocation();
-            locationTask.addOnCompleteListener(this, task -> {
-                if (task.isSuccessful()) {
+            LocationRequest request = new LocationRequest();
+            request.setInterval(5000); // 5s interval
+            request.setFastestInterval(5000);
+
+            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+            locationCallback = new LocationCallback() {
+                @Override
+                public void onLocationResult(LocationResult locationResult) {
+                    if (mMap == null || locationResult == null || locationResult.getLastLocation() == null) {
+                        Log.w(Constants.LOG_TAG, "Failed to display current Location");
+                        return;
+                    }
                     // Set the map's camera position to the current location of the device.
-                    Location lastKnownLocation = (Location) task.getResult();
+                    Location lastKnownLocation = locationResult.getLastLocation();
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                             new LatLng(lastKnownLocation.getLatitude(),
                                     lastKnownLocation.getLongitude()), Constants.DEFAULT_ZOOM));
@@ -275,11 +300,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     LatLng position = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(position).title("Standort"));
                     loadAddressFromLocation(lastKnownLocation);
-                } else {
-                    Log.e(Constants.LOG_TAG, "Exception: %s", task.getException());
-                    mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
                 }
-            });
+            };
+            fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
         } catch (SecurityException e) {
             Log.e(Constants.LOG_TAG, "No GPS Permission");
         }
@@ -287,9 +311,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Starts an FetchAddressIntentService to receive the Address of a given location.
+     *
      * @param lastKnownLocation
      */
-    private void loadAddressFromLocation(Location lastKnownLocation){
+    private void loadAddressFromLocation(Location lastKnownLocation) {
         AddressStringResultReceiver resultReceiver = new AddressStringResultReceiver(data -> this.onAddressResultReceived(data, lastKnownLocation));
         Intent intent = new Intent(this, FetchAddressIntentService.class);
         intent.putExtra(Constants.ADDRESS_RECEIVER, resultReceiver);
@@ -299,19 +324,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /**
      * Called when an address result for the current position is received
+     *
      * @param address
      * @param location
      * @return
      */
-    private Void onAddressResultReceived(String address, Location location){
+    private Void onAddressResultReceived(String address, Location location) {
         //replaces the loader with the new parkin Spot fragment.
-        this.progressBar.setVisibility(View.INVISIBLE);
+
         this.viewModel.getParkingSpot().setAddress(address);
         this.viewModel.getParkingSpot().setLatitude(location.getLatitude());
         this.viewModel.getParkingSpot().setLongitude(location.getLongitude());
-        this.loadNewParkingSpotFragment();
+
+        if (this.progressBar.getVisibility() == View.VISIBLE) {
+            //First time the position was received
+            this.progressBar.setVisibility(View.INVISIBLE);
+            this.loadNewParkingSpotFragment();
+        }
+
+        //Update the LiveData to display the changes in UI
+        this.viewModel.getCurrentPositionLat().postValue(location.getLatitude());
+        this.viewModel.getCurrentPositionLon().postValue(location.getLongitude());
+        this.viewModel.getCurrentPositionAddress().postValue(address);
+
         return null;
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (this.fusedLocationClient != null)
+            this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
+    }
 
 }

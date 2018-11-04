@@ -34,6 +34,17 @@ public class ParkingSpotDatabaseManager {
         task.execute();
     }
 
+    public static void deleteParkingSpot(final ParkingSpot parkingSpot, final Context context) {
+        AsyncTask task = new AsyncTask() {
+            @Override
+            protected Object doInBackground(Object[] objects) {
+                ParkingSpotDatabaseManager.getDatabase(context).parkingSpotDao().deleteParkingSpots(parkingSpot);
+                return null;
+            }
+        };
+        task.execute();
+    }
+
     public static void getAllParkingSpots(final Context context, Function<List<ParkingSpot>, Void> callback) {
         LoadParkingSpotsTask task = new LoadParkingSpotsTask(context, callback);
         task.execute();
