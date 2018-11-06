@@ -42,9 +42,9 @@ import java.util.List;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
-import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
 import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
@@ -174,6 +174,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        final Observer<Double> positionLatObserver = newLat -> {
+            if (viewModel.getMarkerPositionLon().getValue() != null) {
+                if (this.viewModel.isParkingSpotSaved())
+                    displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), this.viewModel.getParkingSpot().getName());
+                else
+                    displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), "Standort");
+            }
+
+        };
+        final Observer<Double> positionLonObserver = newLon -> {
+            if (viewModel.getMarkerPositionLon().getValue() != null) {
+                if (this.viewModel.isParkingSpotSaved())
+                    displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, this.viewModel.getParkingSpot().getName());
+                else
+                    displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, "Standort");
+            }
+
+        };
+
+        this.viewModel.getMarkerPositionLat().observe(this, positionLatObserver);
+        this.viewModel.getMarkerPositionLon().observe(this, positionLonObserver);
+
+
+        //Trigger the callback once to make sure the marker is displayed, when the DB was already loaded
+        //before attaching the callback. (TODO: Check if the callback is actually triggered)
+        Double lonValue = this.viewModel.getMarkerPositionLon().getValue();
+        if (lonValue != null)
+            this.viewModel.getMarkerPositionLon().postValue(lonValue);
+
     }
 
     @Override
@@ -228,6 +257,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (currentSpot != null) {
             viewModel.setParkingSpot(currentSpot);
             viewModel.setParkingSpotSaved(true);
+            viewModel.getMarkerPositionLat().setValue(currentSpot.getLatitude());
+            viewModel.getMarkerPositionLon().setValue(currentSpot.getLongitude());
             loadExistingParkingSpotFragment();
         } else {
             viewModel.setParkingSpotSaved(false);
@@ -287,18 +318,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             locationCallback = new LocationCallback() {
                 @Override
                 public void onLocationResult(LocationResult locationResult) {
-                    if (mMap == null || locationResult == null || locationResult.getLastLocation() == null) {
+                    if (locationResult == null || locationResult.getLastLocation() == null) {
                         Log.w(Constants.LOG_TAG, "Failed to display current Location");
                         return;
                     }
                     // Set the map's camera position to the current location of the device.
                     Location lastKnownLocation = locationResult.getLastLocation();
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                            new LatLng(lastKnownLocation.getLatitude(),
-                                    lastKnownLocation.getLongitude()), Constants.DEFAULT_ZOOM));
-                    // Add a marker in Germany, and move the camera.
-                    LatLng position = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(position).title("Standort"));
                     loadAddressFromLocation(lastKnownLocation);
 
                 }
@@ -306,6 +331,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
         } catch (SecurityException e) {
             Log.e(Constants.LOG_TAG, "No GPS Permission");
+        }
+    }
+
+    /**
+     * Displays a marker on given position on the map.
+     *
+     * @param lat
+     * @param lon
+     */
+    public void displayMarkerOnMap(double lat, double lon, String title) {
+        if (mMap != null) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(lat, lon), Constants.DEFAULT_ZOOM));
+            // Add a marker in Germany, and move the camera.
+            LatLng position = new LatLng(lat, lon);
+            mMap.addMarker(new MarkerOptions().position(position).title(title));
         }
     }
 
@@ -343,8 +384,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //Update the LiveData to display the changes in UI
-        this.viewModel.getCurrentPositionLat().postValue(location.getLatitude());
-        this.viewModel.getCurrentPositionLon().postValue(location.getLongitude());
+        this.viewModel.getMarkerPositionLat().postValue(location.getLatitude());
+        this.viewModel.getMarkerPositionLon().postValue(location.getLongitude());
         this.viewModel.getCurrentPositionAddress().postValue(address);
 
         return null;

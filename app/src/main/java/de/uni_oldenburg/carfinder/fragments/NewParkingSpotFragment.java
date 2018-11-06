@@ -116,8 +116,8 @@ public class NewParkingSpotFragment extends Fragment {
         final Observer<Double> positionLonObserver = newLon -> newLatLong.setText(this.viewModel.getParkingSpot().getLatitude() + ", " + newLon);
 
         this.viewModel.getCurrentPositionAddress().observe(this, addressObserver);
-        this.viewModel.getCurrentPositionLat().observe(this, positionLatObserver);
-        this.viewModel.getCurrentPositionLon().observe(this, positionLonObserver);
+        this.viewModel.getMarkerPositionLat().observe(this, positionLatObserver);
+        this.viewModel.getMarkerPositionLon().observe(this, positionLonObserver);
 
     }
 

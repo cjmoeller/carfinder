@@ -11,8 +11,8 @@ public class MainViewModel extends ViewModel {
     private boolean parkingSpotSaved;
 
     private MutableLiveData<String> currentPositionAddress;
-    private MutableLiveData<Double> currentPositionLat;
-    private MutableLiveData<Double> currentPositionLon;
+    private MutableLiveData<Double> markerPositionLat;
+    private MutableLiveData<Double> markerPositionLon;
 
 
     public MainViewModel() {
@@ -20,8 +20,8 @@ public class MainViewModel extends ViewModel {
         checkedDatabase = false;
         parkingSpotSaved = false;
         currentPositionAddress = new MutableLiveData<>();
-        currentPositionLat = new MutableLiveData<>();
-        currentPositionLon = new MutableLiveData<>();
+        markerPositionLat = new MutableLiveData<>();
+        markerPositionLon = new MutableLiveData<>();
     }
 
 
@@ -53,11 +53,11 @@ public class MainViewModel extends ViewModel {
         return currentPositionAddress;
     }
 
-    public MutableLiveData<Double> getCurrentPositionLat() {
-        return currentPositionLat;
+    public MutableLiveData<Double> getMarkerPositionLat() {
+        return markerPositionLat;
     }
 
-    public MutableLiveData<Double> getCurrentPositionLon() {
-        return currentPositionLon;
+    public MutableLiveData<Double> getMarkerPositionLon() {
+        return markerPositionLon;
     }
 }
