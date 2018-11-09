@@ -16,7 +16,7 @@ import androidx.room.Update;
 public interface ParkingSpotDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertParkingSpots(ParkingSpot... parkingSpots);
+    long insertParkingSpot(ParkingSpot parkingSpot);
 
     @Update
     void updateParkingSpots(ParkingSpot... parkingSpots);

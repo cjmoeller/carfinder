@@ -285,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Loads the fragment to create a new parking spot.
      */
-    private void loadNewParkingSpotFragment() {
+    public void loadNewParkingSpotFragment() {
         if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
             newParkingSpotFragment = new NewParkingSpotFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
@@ -304,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /**
      * Call this method to display the current location including the address.
      */
-    private void displayLocation() {
+    public void displayLocation() {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 

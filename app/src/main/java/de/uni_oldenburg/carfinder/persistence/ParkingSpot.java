@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey;
 public class ParkingSpot implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private long id;
 
     /**
      * Time when the parking spot entry was created.
@@ -65,11 +65,11 @@ public class ParkingSpot implements Serializable {
         this.address = address;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

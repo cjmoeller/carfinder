@@ -1,5 +1,6 @@
 package de.uni_oldenburg.carfinder.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,7 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import org.w3c.dom.Text;
 
@@ -19,7 +23,9 @@ import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.activities.MainActivity;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
+import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 
@@ -31,6 +37,9 @@ public class ExistingParkingSpotFragment extends Fragment {
     private TextView existingAddress;
     private MainViewModel viewModel;
     private Button startNavigation;
+    private Button deleteSpot;
+    private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -64,8 +73,23 @@ public class ExistingParkingSpotFragment extends Fragment {
         });
 
 
+        LinearLayout bottomSheetLayout = getActivity().findViewById(R.id.bottom_sheet);
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+
         existingName = getActivity().findViewById(R.id.existingName);
         existingAddress = getActivity().findViewById(R.id.existingAddress);
+
+        deleteSpot = getActivity().findViewById(R.id.deleteSpot);
+        deleteSpot.setOnClickListener(v -> {
+            viewModel.setParkingSpotSaved(false);
+            ParkingSpotDatabaseManager.archiveParkingSpot(this.viewModel.getParkingSpot(), getContext());
+            Activity parentActivity = getActivity();
+            if (parentActivity instanceof MainActivity) {
+                ((MainActivity) parentActivity).loadNewParkingSpotFragment();
+                ((MainActivity) parentActivity).displayLocation();
+            }
+            this.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        });
 
         startNavigation = getActivity().findViewById(R.id.startNavigation);
         startNavigation.setOnClickListener(v -> {

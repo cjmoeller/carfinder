@@ -23,12 +23,17 @@ public class ParkingSpotDatabaseManager {
         return instance;
     }
 
-    public static void insertParkingSpot(final ParkingSpot parkingSpot, final Context context) {
-        AsyncTask task = new AsyncTask() {
+    public static void insertParkingSpot(final ParkingSpot parkingSpot, final Function<Long, Void> callback, final Context context) {
+        AsyncTask task = new AsyncTask<Object, Object, Long>() {
             @Override
-            protected Object doInBackground(Object[] objects) {
-                ParkingSpotDatabaseManager.getDatabase(context).parkingSpotDao().insertParkingSpots(parkingSpot);
-                return null;
+            protected Long doInBackground(Object[] objects) {
+                return ParkingSpotDatabaseManager.getDatabase(context).parkingSpotDao().insertParkingSpot(parkingSpot);
+
+            }
+
+            @Override
+            protected void onPostExecute(Long result) {
+                callback.apply(result);
             }
         };
         task.execute();
