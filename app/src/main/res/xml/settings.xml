@@ -16,6 +16,10 @@
             android:key="pref_key_mms_delete_limit"
             android:summary="Erkennung vom Parken durch Bluetooth-Überwachung"
             android:title="Bluetooth"  />
+        <MultiSelectListPreference
+            android:key="pref_key_bluetooth_device"
+            android:summary="Bluetooth Device vom Radio auswählen."
+            android:title="Bluetooth Device auswählen" />
     </PreferenceCategory>
     <PreferenceCategory
         android:title="Weitere Einstellungen"
