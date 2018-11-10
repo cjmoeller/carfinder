@@ -6,7 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,16 +31,22 @@ public class HistoryListFragment extends ListFragment {
 
         for (ParkingSpot parkingSpot : data) {
             HashMap<String, String> hm = new HashMap<String, String>();
+            Date currentDate = new Date(parkingSpot.getTimestamp());
+            String dateString = new SimpleDateFormat("dd.MM.yy").format(currentDate);
+
+            hm.put("date", dateString);
             hm.put("title", parkingSpot.getName());
             hm.put("address", parkingSpot.getAddress());
+
+
             aList.add(hm);
         }
 
         // Keys used in Hashmap
-        String[] from = {"title", "address"};
+        String[] from = {"title", "address", "date"};
 
         // Ids of views in listview_layout
-        int[] to = {R.id.history_title, R.id.history_address};
+        int[] to = {R.id.history_title, R.id.history_address, R.id.historyDate};
 
         // Instantiating an adapter to store each items
         // R.layout.listview_layout defines the layout of each item
