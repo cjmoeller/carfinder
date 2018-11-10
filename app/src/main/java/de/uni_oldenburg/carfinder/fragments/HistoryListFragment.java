@@ -19,12 +19,12 @@ public class HistoryListFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        
         ParkingSpotDatabaseManager.getAllParkingSpots(getContext(), data -> onDataLoaded(data));
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     private Void onDataLoaded(List<ParkingSpot> data) {
+        this.getListView().setDivider(null); //removes the divider
         List<HashMap<String, String>> aList = new ArrayList<>();
 
         for (ParkingSpot parkingSpot : data) {

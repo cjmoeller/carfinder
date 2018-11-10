@@ -25,7 +25,7 @@ public class BluetoothChangeReceiver extends BroadcastReceiver {
             SharedPreferences sharedPreferences =
                     PreferenceManager.getDefaultSharedPreferences(context);
             Set<String> configuredDevices = sharedPreferences.getStringSet("pref_key_bluetooth_device", null);
-            if (configuredDevices.contains(device.getAddress())) {
+            if (configuredDevices != null && configuredDevices.contains(device.getAddress())) {
                 //A user configured device was disconnected. So probably the car was parked.
                 Log.i(Constants.LOG_TAG, "Bluetooth device disconnected!");
                 Intent startService = new Intent(context, ForegroundLocationService.class);

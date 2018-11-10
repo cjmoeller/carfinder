@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import androidx.fragment.app.Fragment;
@@ -46,7 +47,9 @@ public class DetailsFragment extends Fragment {
         if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
             this.data = data;
             Date currentDate = new Date(data.getTimestamp());
-            this.addedTime.setText("Hinzugefügt am: " + currentDate.toString());
+            String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
+
+            this.addedTime.setText("Hinzugefügt am: " + dateString);
             this.notes.setText(data.getDescription());
 
             this.picture.post(() -> {
