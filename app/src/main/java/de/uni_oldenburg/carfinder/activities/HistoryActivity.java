@@ -19,5 +19,6 @@ public class HistoryActivity extends AppCompatActivity {
         // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
+
     }
 }

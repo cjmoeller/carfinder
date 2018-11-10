@@ -1,9 +1,11 @@
 package de.uni_oldenburg.carfinder.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import java.text.SimpleDateFormat;
@@ -14,8 +16,11 @@ import java.util.List;
 
 import androidx.fragment.app.ListFragment;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.activities.DetailsActivity;
+import de.uni_oldenburg.carfinder.activities.HistoryActivity;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
+import de.uni_oldenburg.carfinder.util.Constants;
 
 public class HistoryListFragment extends ListFragment {
     @Override
@@ -25,7 +30,10 @@ public class HistoryListFragment extends ListFragment {
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
-    private Void onDataLoaded(List<ParkingSpot> data) {
+    private List<ParkingSpot> data;
+
+    private Void onDataLoaded(List<ParkingSpot> data) { //TODO: Sort list by date.
+        this.data = data;
         this.getListView().setDivider(null); //removes the divider
         List<HashMap<String, String>> aList = new ArrayList<>();
 
@@ -54,5 +62,15 @@ public class HistoryListFragment extends ListFragment {
 
         setListAdapter(adapter);
         return null;
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        if (this.data != null) {
+            ParkingSpot selectedItem = this.data.get(position);
+            Intent intentDetails = new Intent(getContext(), DetailsActivity.class);
+            intentDetails.putExtra(Constants.EXTRA_PARKING_SPOT, selectedItem);
+            startActivity(intentDetails);
+        }
     }
 }

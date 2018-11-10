@@ -16,4 +16,5 @@ public class Constants {
     public static final String ADDRESS_RECEIVER = "ADDRESS_RECEIVER";
     public static final int REQUEST_IMAGE_CAPTURE = 19;
     public static final String FILEPROVIDER_AUTHORITY = "de.uni_oldenburg.carfinder.fileprovider";
+    public static final String EXTRA_PARKING_SPOT = "PARKING_SPOT_EXTRA";
 }

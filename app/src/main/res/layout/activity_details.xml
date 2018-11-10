@@ -51,7 +51,11 @@
 
                 android:orientation="vertical">
 
-                <include layout="@layout/fragment_details"></include>
+                <fragment
+                    android:layout_width="match_parent"
+                    android:name="de.uni_oldenburg.carfinder.fragments.DetailsFragment"
+                    android:id="@+id/detailsActFragment"
+                    android:layout_height="match_parent"/>
             </LinearLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
