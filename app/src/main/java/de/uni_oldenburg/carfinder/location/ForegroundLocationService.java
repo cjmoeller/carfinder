@@ -52,9 +52,9 @@ public class ForegroundLocationService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
-                .setContentTitle("CarFinder Location")
-                .setTicker("CarFinder Location")
-                .setContentText("Trying to locate your parking spot...")
+                .setContentTitle(getString(R.string.foreground_loc_title))
+                .setTicker(getString(R.string.foreground_loc_ticker))
+                .setContentText(getString(R.string.foreground_loc_text))
                 .setSmallIcon(R.drawable.compass_outline)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true).build();
@@ -113,9 +113,9 @@ public class ForegroundLocationService extends Service {
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.car)
-                    .setContentTitle("Parkplatz automatisch erkannt.")
+                    .setContentTitle(getString(R.string.notify_auto_title))
                     .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText("Haben Sie an diesem Ort geparkt: " + addressString + "?"))
+                            .bigText(getString(R.string.notify_auto_content) + addressString + "?"))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(notifyPendingIntent);
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
 

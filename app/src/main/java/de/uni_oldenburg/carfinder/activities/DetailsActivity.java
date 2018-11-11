@@ -82,7 +82,7 @@ public class DetailsActivity extends AppCompatActivity {
                 Intent actionIntent = new Intent();
                 actionIntent.setAction(Intent.ACTION_SEND);
                 actionIntent.setType("text/plain");
-                actionIntent.putExtra(Intent.EXTRA_TEXT, "Hey, ich habe hier geparkt: " + Constants.MAP_SHARE_URL + this.data.getLatitude() + "," + this.data.getLongitude());
+                actionIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + Constants.MAP_SHARE_URL + this.data.getLatitude() + "," + this.data.getLongitude());
                 this.startActivity(actionIntent);
                 return true;
             default:

@@ -27,7 +27,7 @@
                     android:id="@+id/textView6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Einen neuen Parkplatz hinzufügen:" />
+                    android:text="@string/add_new_spot" />
 
                 <EditText
                     android:id="@+id/createParkingSpotName"
@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="Neuer Parkplatz" />
+                    android:text="@string/default_spot_name" />
 
                 <TextView
                     android:id="@+id/createDate"
@@ -76,7 +76,7 @@
                     android:id="@+id/textView7"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Foto hinzufügen"
+                    android:text="@string/add_photo"
                     android:textAlignment="center" />
             </LinearLayout>
 
@@ -108,7 +108,7 @@
                     android:id="@+id/textView8"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Notiz hinzufügen"
+                    android:text="@string/add_note"
                     android:textAlignment="center" />
             </LinearLayout>
 
@@ -139,7 +139,7 @@
                     android:id="@+id/textView9"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Parkuhr hinzufügen"
+                    android:text="@string/add_clock"
                     android:textAlignment="center" />
             </LinearLayout>
 

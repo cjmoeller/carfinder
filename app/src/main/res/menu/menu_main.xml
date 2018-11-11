@@ -5,13 +5,13 @@
     <item
         android:id="@+id/action_history"
         android:icon="@drawable/restore_clock"
-        android:title="Verlauf"
+        android:title="@string/menu_history"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/settings_outline"
-        android:title="test"
+        android:title="@string/menu_settings"
         app:showAsAction="ifRoom" />
 
 </menu>

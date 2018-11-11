@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Task task = ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent);
         task.addOnFailureListener(
-                e -> Toast.makeText(MainActivity.this, "Automatic parking spot detection is not available on your device.", Toast.LENGTH_LONG).show());
+                e -> Toast.makeText(MainActivity.this, getString(R.string.activity_recognition_na), Toast.LENGTH_LONG).show()); //TODO: Use Snackbar
 
     }
 
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (this.viewModel.isParkingSpotSaved())
                     displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), this.viewModel.getParkingSpot().getName());
                 else
-                    displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), "Standort");
+                    displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), getString(R.string.own_position));
             }
 
         };
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (this.viewModel.isParkingSpotSaved())
                     displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, this.viewModel.getParkingSpot().getName());
                 else
-                    displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, "Standort");
+                    displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, getString(R.string.own_position));
             }
 
         };

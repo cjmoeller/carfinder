@@ -29,15 +29,15 @@
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/car"
                 android:drawablePadding="5dp"
-                android:text="Parkplatz Name"
+                android:text="name"
                 android:textAppearance="@android:style/TextAppearance.Material.Headline" />
 
             <TextView
                 android:id="@+id/existingAddress"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Adresse 1, 12345 Stadt" />
+                android:text="address" />
 
 
         </LinearLayout>
@@ -57,7 +57,7 @@
                 android:drawableLeft="@drawable/compass_outline"
                 android:drawablePadding="2dp"
                 android:padding="7dp"
-                android:text="Navigieren"
+                android:text="@string/btn_navigate"
                 android:textColor="#fff" />
 
         </LinearLayout>
@@ -86,7 +86,7 @@
             android:background="#d00"
             android:drawableLeft="@drawable/delete"
             android:padding="5dp"
-            android:text="Löschen"
+            android:text="@string/btn_delete"
             android:textColor="#fff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

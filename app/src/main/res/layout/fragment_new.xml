@@ -28,7 +28,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
-                    android:text="Adresse 1, 12345 Stadt"
+                    android:text="address"
                     android:textColor="#000"
                     android:textSize="25dp" />
 
@@ -37,7 +37,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="52.17232° N, 8.982736° O" />
+                    android:text="coordinates" />
 
 
             </LinearLayout>
@@ -57,7 +57,7 @@
                 android:drawableLeft="@drawable/car_white"
                 android:drawablePadding="2dp"
                 android:padding="7dp"
-                android:text="Parken"
+                android:text="@string/btn_park_here"
                 android:textColor="#fff"
                />
 

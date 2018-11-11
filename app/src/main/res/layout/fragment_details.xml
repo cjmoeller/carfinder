@@ -28,7 +28,7 @@
                     android:id="@+id/detailsTimeAdded"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hinzugefügt: 28. Oktober 2018, 11:42 Uhr"
+                    android:text="time added"
 
                     android:textAppearance="@android:style/TextAppearance.Material.Headline" />
 
@@ -55,7 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:text="Foto:"
+                    android:text="@string/title_photo"
                     android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
 
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
-                    android:text="Notiz:"
+                    android:text="@string/title_note"
                     android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium" />
 
                 <TextView
@@ -132,7 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAlignment="center"
-                    android:text="Parkuhr hinzufügen" />
+                    android:text="@string/add_clock" />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>

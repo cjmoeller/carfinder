@@ -72,7 +72,7 @@
                     android:background="#d00"
                     android:drawableLeft="@drawable/delete"
                     android:padding="5dp"
-                    android:text="Löschen"
+                    android:text="@string/btn_delete"
                     android:textColor="#fff"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

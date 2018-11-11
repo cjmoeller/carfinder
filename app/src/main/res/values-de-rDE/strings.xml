@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Car Finder</string>
+    <string name="channel_name">Car Finder</string>
+    <string name="channel_description">Car Finder Benachrichtigungen</string>
+    <string name="share_text">Hey, ich habe hier geparkt:</string>
+    <string name="activity_recognition_na">Automatische Parkerkennung ist auf diesem Gerät nicht verfügbar.</string>
+    <string name="own_position">Standort</string>
+    <string name="added_on">Hinzugefügt am:</string>
+    <string name="foreground_loc_title">Carfinder Lokalisierung</string>
+    <string name="foreground_loc_ticker">Carfinder Lokalisierung</string>
+    <string name="foreground_loc_text">Versuche den Parkplatz zu finden...</string>
+    <string name="notify_auto_title">Parkplatz automatisch erkannt.</string>
+    <string name="notify_auto_content">Haben Sie hier geparkt:</string>
+    <string name="btn_delete">Löschen</string>
+    <string name="title_photo">Foto:</string>
+    <string name="title_note">Notiz:</string>
+    <string name="add_clock">Parkuhr hinzufügen</string>
+    <string name="btn_navigate">Navigieren</string>
+    <string name="btn_park_here">Parken</string>
+    <string name="add_new_spot">Einen neuen Parkplatz hinzufügen:</string>
+    <string name="default_spot_name">Neuer Parkplatz</string>
+    <string name="add_photo">Foto hinzufügen</string>
+    <string name="add_note">Notiz hinzufügen</string>
+    <string name="menu_show_map">Auf Karte zeigen</string>
+    <string name="menu_history">Verlauf</string>
+    <string name="menu_settings">Einstellungen</string>
+    <string name="settings_cat_common">Allgemeine Einstellungen</string>
+    <string name="settings_cat_other">Andere</string>
+    <string name="settings_desc_auto">Benutzt Bewegungserkennung zur automatischen Parkerkennung</string>
+    <string name="settings_tl_auto">Automatische Parkerkennung</string>
+    <string name="settings_desc_notify">Wählen Sie, welche Benachrichtungen gesendet werden</string>
+    <string name="settings_tl_notify">Benachrichtigungen</string>
+    <string name="settings_desc_bldevice">Wählen Sie das BT-Gerät ihres Autos.</string>
+    <string name="settings_tl_bldevice">Bluetooth Gerät</string>
+</resources>

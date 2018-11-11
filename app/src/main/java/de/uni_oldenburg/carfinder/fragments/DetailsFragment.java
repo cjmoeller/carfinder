@@ -49,7 +49,7 @@ public class DetailsFragment extends Fragment {
             Date currentDate = new Date(data.getTimestamp());
             String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
 
-            this.addedTime.setText("Hinzugefügt am: " + dateString);
+            this.addedTime.setText(getString(R.string.added_on) + dateString);
             this.notes.setText(data.getDescription());
 
             this.picture.post(() -> {
