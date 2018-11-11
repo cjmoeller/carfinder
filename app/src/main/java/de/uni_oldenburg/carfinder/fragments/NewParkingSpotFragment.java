@@ -1,6 +1,7 @@
 package de.uni_oldenburg.carfinder.fragments;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.io.File;
 import java.io.IOException;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -37,11 +39,13 @@ public class NewParkingSpotFragment extends Fragment {
 
     private TextView newAddress;
     private TextView newLatLong;
+    private TextView notes;
     private Button startParkingButton;
     private CardView photoCard;
     private CardView notesCard;
     private CardView clockCard;
     private ImageView pictureImageView;
+    private ImageView notesImageView;
     private EditText parkingSpotName;
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
 
@@ -66,6 +70,7 @@ public class NewParkingSpotFragment extends Fragment {
     private void initializeUI() {
         newAddress = getActivity().findViewById(R.id.newAddress);
         newLatLong = getActivity().findViewById(R.id.newLatLon);
+        notes = getActivity().findViewById(R.id.textViewNoteNew);
 
         startParkingButton = getActivity().findViewById(R.id.startParkingButton);
         startParkingButton.setOnClickListener(v -> {
@@ -76,7 +81,7 @@ public class NewParkingSpotFragment extends Fragment {
             } else {
                 this.viewModel.getParkingSpot().setCurrentlyUsed(true);
                 this.viewModel.getParkingSpot().setName(this.parkingSpotName.getText().toString());
-                this.viewModel.getParkingSpot().setDescription("Hier könnte man implementieren, dass der Benutzer auch eine Beschreibung hinzufügen kann. Kann man machen, muss man aber nicht... Deswegen steht jetzt dieser ultrakrasse Text hier! 42");
+                this.viewModel.getParkingSpot().setDescription(this.notes.getText().toString());
                 this.viewModel.getParkingSpot().setTimestamp(System.currentTimeMillis());
                 ParkingSpotDatabaseManager.insertParkingSpot(this.viewModel.getParkingSpot(), (Long id) -> {
                     this.viewModel.getParkingSpot().setId(id);
@@ -92,6 +97,7 @@ public class NewParkingSpotFragment extends Fragment {
         });
 
         pictureImageView = getActivity().findViewById(R.id.imageViewPicture);
+        notesImageView = getActivity().findViewById(R.id.imageViewNote);
         LinearLayout bottomSheetLayout = getActivity().findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         parkingSpotName = getActivity().findViewById(R.id.createParkingSpotName);
@@ -160,7 +166,29 @@ public class NewParkingSpotFragment extends Fragment {
      * Opens a dialog to save a note.
      */
     private void addNote() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        final EditText input = new EditText(getActivity());
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        input.setLayoutParams(lp);
+        builder.setView(input);
+        builder.setTitle(getString(R.string.dialog_enter_note));
 
+        builder.setPositiveButton(getString(R.string.dialog_ok), (dialog, id) -> {
+            //Remove image View
+            ViewGroup parent = (ViewGroup) NewParkingSpotFragment.this.notesImageView.getParent();
+            if (parent != null) {
+                parent.removeView(NewParkingSpotFragment.this.notesImageView);
+            }
+            //Add Notes Text
+            NewParkingSpotFragment.this.viewModel.getParkingSpot().setDescription(input.getText().toString());
+            NewParkingSpotFragment.this.notes.setText(input.getText().toString());
+        });
+
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     /**

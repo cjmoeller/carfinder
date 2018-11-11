@@ -99,13 +99,13 @@
 
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/imageViewNote"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:srcCompat="@android:drawable/ic_menu_add" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/textViewNoteNew"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/add_note"
@@ -130,7 +130,7 @@
 
 
                 <ImageView
-                    android:id="@+id/imageView3"
+                    android:id="@+id/imageViewClock"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:srcCompat="@android:drawable/ic_menu_add" />

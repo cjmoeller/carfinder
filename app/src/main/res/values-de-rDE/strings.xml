@@ -33,4 +33,6 @@
     <string name="settings_tl_notify">Benachrichtigungen</string>
     <string name="settings_desc_bldevice">Wählen Sie das BT-Gerät ihres Autos.</string>
     <string name="settings_tl_bldevice">Bluetooth Gerät</string>
+    <string name="dialog_ok">Okay</string>
+    <string name="dialog_enter_note">Enter a note:</string>
 </resources>

@@ -32,4 +32,6 @@
     <string name="settings_tl_notify">Notifications</string>
     <string name="settings_desc_bldevice">Select your cars BT device</string>
     <string name="settings_tl_bldevice">Bluetooth device</string>
+    <string name="dialog_ok">Okay</string>
+    <string name="dialog_enter_note">Enter a note:</string>
 </resources>
