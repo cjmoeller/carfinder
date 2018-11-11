@@ -1,10 +1,12 @@
 package de.uni_oldenburg.carfinder.activities;
 
+import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Location;
 import android.os.Build;
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -41,6 +44,8 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ExistingParkingSpotFragment existingParkingSpotFragment;
     private ProgressBar progressBar;
     private NewParkingSpotFragment newParkingSpotFragment;
+    private Marker currentMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -294,6 +300,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void initUI() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
         this.progressBar = findViewById(R.id.progressBar);
         this.initializeBottomSheetMenu();
     }
@@ -342,11 +351,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void displayMarkerOnMap(double lat, double lon, String title) {
         if (mMap != null) {
+            if (this.currentMarker != null)
+                this.currentMarker.remove();
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                     new LatLng(lat, lon), Constants.DEFAULT_ZOOM));
             // Add a marker in Germany, and move the camera.
             LatLng position = new LatLng(lat, lon);
-            mMap.addMarker(new MarkerOptions().position(position).title(title));
+            this.currentMarker = mMap.addMarker(new MarkerOptions().position(position).title(title));
         }
     }
 
@@ -356,11 +367,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * @param lastKnownLocation
      */
     private void loadAddressFromLocation(Location lastKnownLocation) {
-        AddressStringResultReceiver resultReceiver = new AddressStringResultReceiver(data -> this.onAddressResultReceived(data, lastKnownLocation));
-        Intent intent = new Intent(this, FetchAddressIntentService.class);
-        intent.putExtra(Constants.ADDRESS_RECEIVER, resultReceiver);
-        intent.putExtra(Constants.LOCATION_DATA_EXTRA, lastKnownLocation);
-        startService(intent);
+        if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            AddressStringResultReceiver resultReceiver = new AddressStringResultReceiver(data -> this.onAddressResultReceived(data, lastKnownLocation));
+            Intent intent = new Intent(this, FetchAddressIntentService.class);
+            intent.putExtra(Constants.ADDRESS_RECEIVER, resultReceiver);
+            intent.putExtra(Constants.LOCATION_DATA_EXTRA, lastKnownLocation);
+            startService(intent);
+        }
     }
 
     /**
@@ -392,10 +405,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
         if (this.fusedLocationClient != null)
             this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
     }
 
 }

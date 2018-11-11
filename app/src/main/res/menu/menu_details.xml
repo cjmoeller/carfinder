@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
     <item
-        android:id="@+id/action_history"
-        android:icon="@drawable/restore_clock"
-        android:title="Verlauf"
+        android:id="@+id/action_map"
+        android:icon="@drawable/map_search"
+        android:title="Auf Karte zeigen"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_settings"
-        android:icon="@drawable/settings_outline"
-        android:title="test"
+        android:id="@+id/action_share"
+        android:icon="@drawable/share"
+        android:title="Teilen"
         app:showAsAction="ifRoom" />
-
 </menu>

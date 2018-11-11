@@ -17,4 +17,5 @@ public class Constants {
     public static final int REQUEST_IMAGE_CAPTURE = 19;
     public static final String FILEPROVIDER_AUTHORITY = "de.uni_oldenburg.carfinder.fileprovider";
     public static final String EXTRA_PARKING_SPOT = "PARKING_SPOT_EXTRA";
+    public static final String MAP_SHARE_URL = "https://www.google.com/maps/search/?api=1&query=";
 }
