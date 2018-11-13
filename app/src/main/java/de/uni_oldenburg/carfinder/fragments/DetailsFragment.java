@@ -5,35 +5,38 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.util.PhotoUtils;
+import de.uni_oldenburg.carfinder.viewmodels.HistoryViewModel;
 
 public class DetailsFragment extends Fragment {
 
-    private ParkingSpot data;
     private TextView addedTime;
     private TextView notes;
     private ImageView picture;
-    private ScrollView rootView;
+    private View rootView;
+    private ParkingSpot data;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = (ScrollView) inflater.inflate(R.layout.fragment_details, container);
+        rootView = inflater.inflate(R.layout.fragment_details, container, false);
+        this.initUI();
+
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        this.initUI();
+
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -44,22 +47,27 @@ public class DetailsFragment extends Fragment {
      * @param data
      */
     public void setData(ParkingSpot data) {
-        if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
-            this.data = data;
-            Date currentDate = new Date(data.getTimestamp());
-            String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
 
-            this.addedTime.setText(getString(R.string.added_on) + dateString);
-            this.notes.setText(data.getDescription());
+        this.data = data;
 
-            this.picture.post(() -> {
-                if (data.getImageLocation() != null) //TODO: check if image exists
-                    PhotoUtils.loadFileIntoImageView(DetailsFragment.this.picture, data.getImageLocation());
-            });
-
-
-        }
+        displayData();
     }
+
+    public void displayData() {
+        Date currentDate = new Date(data.getTimestamp());
+        String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
+
+        this.addedTime.setText(getString(R.string.added_on) + dateString);
+        this.notes.setText(data.getDescription());
+
+        this.picture.post(() -> {
+            if (data.getImageLocation() != null) //TODO: check if image exists
+                PhotoUtils.loadFileIntoImageView(DetailsFragment.this.picture, data.getImageLocation());
+        });
+
+
+    }
+
 
     private void initUI() {
         this.addedTime = rootView.findViewById(R.id.detailsTimeAdded);

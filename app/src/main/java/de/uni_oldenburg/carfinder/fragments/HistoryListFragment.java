@@ -1,6 +1,5 @@
 package de.uni_oldenburg.carfinder.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,18 +13,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.ListFragment;
+import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
-import de.uni_oldenburg.carfinder.activities.DetailsActivity;
 import de.uni_oldenburg.carfinder.activities.HistoryActivity;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
-import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.viewmodels.HistoryViewModel;
 
 public class HistoryListFragment extends ListFragment {
+
+    private HistoryViewModel viewModel;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        viewModel = ViewModelProviders.of(getActivity()).get(HistoryViewModel.class);
         ParkingSpotDatabaseManager.getAllParkingSpots(getContext(), data -> onDataLoaded(data));
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -61,6 +65,10 @@ public class HistoryListFragment extends ListFragment {
         SimpleAdapter adapter = new SimpleAdapter(getActivity().getBaseContext(), aList, R.layout.listitem_history, from, to);
 
         setListAdapter(adapter);
+
+        if(this.viewModel.getSelectedParkingSpot() != null){
+            //TODO: Perform click on that spot.
+        }
         return null;
     }
 
@@ -68,9 +76,19 @@ public class HistoryListFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         if (this.data != null) {
             ParkingSpot selectedItem = this.data.get(position);
-            Intent intentDetails = new Intent(getContext(), DetailsActivity.class);
-            intentDetails.putExtra(Constants.EXTRA_PARKING_SPOT, selectedItem);
-            startActivity(intentDetails);
+            if (this.getActivity() instanceof HistoryActivity) {
+                ((HistoryActivity) this.getActivity()).onParkingSpotSelected(selectedItem);
+                this.viewModel.setSelectedParkingSpot(selectedItem);
+            }
+            for (int i = 0; i < this.getListView().getChildCount(); i++) {
+                View currentView = this.getListView().getChildAt(i);
+                if (i == position) {
+                    currentView.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorHistorySelected));
+                } else {
+                    currentView.setBackgroundColor(ContextCompat.getColor(this.getContext(), R.color.colorHistoryNotSelected));
+
+                }
+            }
         }
     }
 }

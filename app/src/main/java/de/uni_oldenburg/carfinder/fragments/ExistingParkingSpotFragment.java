@@ -83,6 +83,7 @@ public class ExistingParkingSpotFragment extends Fragment {
         deleteSpot.setOnClickListener(v -> {
             viewModel.setParkingSpotSaved(false);
             ParkingSpotDatabaseManager.archiveParkingSpot(this.viewModel.getParkingSpot(), getContext());
+            this.viewModel.getParkingSpot().setId(0); //Needed to tell room that it should auto generate an Id
             Activity parentActivity = getActivity();
             if (parentActivity instanceof MainActivity) {
                 ((MainActivity) parentActivity).loadNewParkingSpotFragment();
