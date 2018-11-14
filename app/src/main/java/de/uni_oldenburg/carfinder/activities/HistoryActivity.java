@@ -1,7 +1,10 @@
 package de.uni_oldenburg.carfinder.activities;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.ActionBar;
@@ -22,6 +25,7 @@ public class HistoryActivity extends AppCompatActivity {
     private LinearLayout detailsFragmentContainer;
     private HistoryViewModel viewModel;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +40,19 @@ public class HistoryActivity extends AppCompatActivity {
         ab.setDisplayHomeAsUpEnabled(true);
 
         detailsFragmentContainer = findViewById(R.id.detailsHistoryFragmentContainer);
+        if (detailsFragmentContainer != null) {
+            this.viewModel.setMasterDetailMode(true);
+        }
 
     }
 
     //TODO: Interface
     public void onParkingSpotSelected(ParkingSpot spot) {
-        if (this.detailsFragmentContainer != null) {
+        if (this.viewModel.isMasterDetailMode()) {
             //running on Tablet
+
+
+            invalidateOptionsMenu();
             DetailsFragment details = new DetailsFragment();
             details.getLifecycle().addObserver(new LifecycleObserver() {
                 @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -57,6 +67,42 @@ public class HistoryActivity extends AppCompatActivity {
             Intent intentDetails = new Intent(this, DetailsActivity.class);
             intentDetails.putExtra(Constants.EXTRA_PARKING_SPOT, spot);
             startActivity(intentDetails);
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (this.viewModel.isMasterDetailMode()) {
+            getMenuInflater().inflate(R.menu.menu_details, menu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (this.viewModel.getSelectedParkingSpot() == null)
+            return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+
+            case R.id.action_map:
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + this.viewModel.getSelectedParkingSpot().getLatitude() + "," +
+                        this.viewModel.getSelectedParkingSpot().getLongitude() + "(" + this.viewModel.getSelectedParkingSpot().getName() + ")" + "&z=" + Constants.DEFAULT_ZOOM);
+                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                mapIntent.setPackage("com.google.android.apps.maps");
+                startActivity(mapIntent);
+                return true;
+            case R.id.action_share:
+                Intent actionIntent = new Intent();
+                actionIntent.setAction(Intent.ACTION_SEND);
+                actionIntent.setType("text/plain");
+                actionIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + Constants.MAP_SHARE_URL +
+                        this.viewModel.getSelectedParkingSpot().getLatitude() + "," + this.viewModel.getSelectedParkingSpot().getLongitude());
+                this.startActivity(actionIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+
         }
     }
 }

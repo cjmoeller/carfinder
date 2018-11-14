@@ -8,6 +8,11 @@ import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
  */
 public class HistoryViewModel extends ViewModel {
     private ParkingSpot selectedParkingSpot;
+    private boolean masterDetailMode;
+
+    public HistoryViewModel(){
+        this.setMasterDetailMode(false);
+    }
 
     public ParkingSpot getSelectedParkingSpot() {
         return selectedParkingSpot;
@@ -15,5 +20,13 @@ public class HistoryViewModel extends ViewModel {
 
     public void setSelectedParkingSpot(ParkingSpot selectedParkingSpot) {
         this.selectedParkingSpot = selectedParkingSpot;
+    }
+
+    public boolean isMasterDetailMode() {
+        return masterDetailMode;
+    }
+
+    public void setMasterDetailMode(boolean masterDetailMode) {
+        this.masterDetailMode = masterDetailMode;
     }
 }

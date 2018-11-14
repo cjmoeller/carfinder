@@ -6,25 +6,28 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:orientation="horizontal">
-
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:id="@+id/linearLayout12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="5dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="clip_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
             <TextView
                 android:id="@+id/existingName"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableLeft="@drawable/car"
@@ -34,7 +37,7 @@
 
             <TextView
                 android:id="@+id/existingAddress"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="address" />
@@ -42,25 +45,35 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+
+        <Button
+            android:id="@+id/startNavigation"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:gravity="right">
+            android:layout_margin="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#33f"
+            android:drawableLeft="@drawable/compass_outline"
+            android:drawablePadding="2dp"
+            android:padding="7dp"
+            android:text="@string/btn_navigate"
+            android:textColor="#fff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
 
-            <Button
-                android:id="@+id/startNavigation"
-                android:layout_width="120dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="#33f"
-                android:drawableLeft="@drawable/compass_outline"
-                android:drawablePadding="2dp"
-                android:padding="7dp"
-                android:text="@string/btn_navigate"
-                android:textColor="#fff" />
 
-        </LinearLayout>
     </LinearLayout>
 
 

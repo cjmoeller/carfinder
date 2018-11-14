@@ -66,8 +66,16 @@ public class HistoryListFragment extends ListFragment {
 
         setListAdapter(adapter);
 
-        if(this.viewModel.getSelectedParkingSpot() != null){
+        if(this.viewModel.getSelectedParkingSpot() != null && this.viewModel.isMasterDetailMode()){
             //TODO: Perform click on that spot.
+            int index = -1;
+            for(int i = 0; i < this.data.size(); i++){
+                if(data.get(i).getId() == this.viewModel.getSelectedParkingSpot().getId())
+                    index = i;
+            }
+            if(index != -1) {
+                this.getListView().performItemClick(this.getListView().getChildAt(index), index, index);
+            }
         }
         return null;
     }

@@ -39,6 +39,8 @@
             android:layout_width="match_parent"
             android:id="@+id/detailsHistoryFragmentContainer"
             android:layout_height="match_parent"
+            android:paddingHorizontal="100dp"
+            android:paddingTop="20dp"
             android:layout_weight="0.4"
             android:orientation="horizontal">
 

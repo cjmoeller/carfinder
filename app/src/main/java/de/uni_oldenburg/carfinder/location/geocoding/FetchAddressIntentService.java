@@ -60,14 +60,11 @@ public class FetchAddressIntentService extends IntentService {
             deliverResultToReceiver(Constants.FAILURE_RESULT, errorMessage);
         } else {
             Address address = addresses.get(0);
-            ArrayList<String> addressFragments = new ArrayList<>();
+            String addressString = address.getThoroughfare() + " " + address.getSubThoroughfare() + ", " + address.getPostalCode() + " " + address.getLocality();
 
-            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
-            }
 
             Log.i(Constants.LOG_TAG, "Found Address");
-            deliverResultToReceiver(Constants.SUCCESS_RESULT, TextUtils.join(System.getProperty("line.separator"), addressFragments));
+            deliverResultToReceiver(Constants.SUCCESS_RESULT, addressString);
         }
     }
 
