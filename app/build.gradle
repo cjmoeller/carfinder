@@ -25,6 +25,8 @@ android {
 dependencies {
     def room_version = "2.1.0-alpha01"
     implementation "androidx.room:room-runtime:$room_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha1'
     annotationProcessor "androidx.room:room-compiler:$room_version"
     // use kapt for Kotlin
     testImplementation "androidx.room:room-testing:$room_version"
