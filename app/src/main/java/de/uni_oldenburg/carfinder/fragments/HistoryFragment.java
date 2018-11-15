@@ -7,11 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.uni_oldenburg.carfinder.R;
@@ -52,6 +51,7 @@ public class HistoryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_history_list, container, false);
         ArrayList<ParkingSpot> data = (ArrayList<ParkingSpot>) this.getArguments().getSerializable(Constants.ARGUMENT_SPOT_LIST);
+
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
@@ -61,10 +61,15 @@ public class HistoryFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new HistoryRecyclerViewAdapter(data, mListener));
-
+            HistoryRecyclerViewAdapter adapter = new HistoryRecyclerViewAdapter(data, mListener);
+            recyclerView.setAdapter(adapter);
+            HistoryTouchHelperCallback touchHelperCallback = new HistoryTouchHelperCallback(this.getContext(), adapter);
+            ItemTouchHelper touchHelper = new ItemTouchHelper(touchHelperCallback);
+            touchHelper.attachToRecyclerView(recyclerView);
 
         }
+
+
         return view;
     }
 

@@ -55,6 +55,11 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         });
     }
 
+    public void removeItemAt(int index){
+        mValues.remove(index);
+        this.notifyItemRemoved(index);
+    }
+
     @Override
     public int getItemCount() {
         return mValues.size();
