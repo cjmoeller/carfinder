@@ -19,4 +19,5 @@ public class Constants {
     public static final String EXTRA_PARKING_SPOT = "PARKING_SPOT_EXTRA";
     public static final String MAP_SHARE_URL = "https://www.google.com/maps/search/?api=1&query=";
     public static final String ARGUMENT_SPOT_LIST = "arg-spots";
+    public static final int RC_SIGN_IN = 20;
 }

@@ -4,18 +4,38 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.Bundle;
 
+import com.firebase.ui.auth.AuthUI;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import androidx.preference.MultiSelectListPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.util.Constants;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings);
+        Preference syncPreference = findPreference("pref_key_sync");
+        syncPreference.setOnPreferenceClickListener(preference -> {
+            // Choose authentication
+            List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build());
+
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .build(),
+                    Constants.RC_SIGN_IN);
+            return true;
+        });
+
         MultiSelectListPreference bluetoothDevices = (MultiSelectListPreference) findPreference("pref_key_bluetooth_device");
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter == null) {

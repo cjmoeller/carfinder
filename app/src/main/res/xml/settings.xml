@@ -25,9 +25,9 @@
         android:title="@string/settings_cat_other"
         android:key="pref_key_other_settings">
         <Preference
-            android:key="pref_key_mms_delete_todo"
-            android:summary="Weitere sinnvolle Einstellungen"
-            android:title="ToDo"  />
+            android:key="pref_key_sync"
+            android:summary="Mit Google-Account synchronisieren."
+            android:title="Synchronisation"  />
     </PreferenceCategory>
 
 </PreferenceScreen>
