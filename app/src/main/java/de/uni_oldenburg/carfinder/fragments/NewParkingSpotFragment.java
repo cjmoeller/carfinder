@@ -1,8 +1,11 @@
 package de.uni_oldenburg.carfinder.fragments;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -22,6 +26,8 @@ import java.io.IOException;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -40,12 +46,14 @@ public class NewParkingSpotFragment extends Fragment {
     private TextView newAddress;
     private TextView newLatLong;
     private TextView notes;
+    private TextView clockTextView;
     private Button startParkingButton;
     private CardView photoCard;
     private CardView notesCard;
     private CardView clockCard;
     private ImageView pictureImageView;
     private ImageView notesImageView;
+    private ImageView clockImageView;
     private EditText parkingSpotName;
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
 
@@ -99,6 +107,9 @@ public class NewParkingSpotFragment extends Fragment {
 
         pictureImageView = getActivity().findViewById(R.id.imageViewPicture);
         notesImageView = getActivity().findViewById(R.id.imageViewNote);
+        clockImageView = getActivity().findViewById(R.id.imageViewClock);
+        clockTextView = getActivity().findViewById(R.id.textViewClock);
+
         LinearLayout bottomSheetLayout = getActivity().findViewById(R.id.bottom_sheet);
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         parkingSpotName = getActivity().findViewById(R.id.createParkingSpotName);
@@ -145,21 +156,26 @@ public class NewParkingSpotFragment extends Fragment {
      */
     private void startCameraForPicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = PhotoUtils.createImageFile(getActivity());
-                this.viewModel.getParkingSpot().setImageLocation(photoFile.getAbsolutePath());
-            } catch (IOException ex) {
-                return; //TODO: handle
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    photoFile = PhotoUtils.createImageFile(getActivity());
+                    this.viewModel.getParkingSpot().setImageLocation(photoFile.getAbsolutePath());
+                } catch (IOException ex) {
+                    return; //TODO: handle
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(getActivity(), Constants.FILEPROVIDER_AUTHORITY, photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+                }
             }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(getActivity(), Constants.FILEPROVIDER_AUTHORITY, photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
-            }
+        }else{
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},Constants.REQUEST_IMAGE_CAPTURE);
+            startCameraForPicture();
         }
     }
 
@@ -196,6 +212,16 @@ public class NewParkingSpotFragment extends Fragment {
      * Starts the parking clock configuration
      */
     private void addClock() {
+
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+
+                NewParkingSpotFragment.this.viewModel.getParkingSpot().setExpiresAt((long)(hourOfDay + minutes));
+                NewParkingSpotFragment.this.clockTextView.setText(Long.toString(hourOfDay + minutes));
+            }
+        }, 0, 0, false);
+        timePickerDialog.show();
 
     }
 
