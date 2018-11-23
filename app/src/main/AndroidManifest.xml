@@ -9,8 +9,6 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
 
-
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -63,13 +61,16 @@
                 android:value="de.uni_oldenburg.carfinder.activities.HistoryActivity" />
         </activity>
 
-        <receiver android:name="de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver">
+        <receiver
+            android:name="de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver"
+            android:exported="false">
             <intent-filter>
                 <action android:name="de.uni_oldenburg.carfinder.TRANSITION"></action>
             </intent-filter>
 
         </receiver>
-        <receiver android:name=".bluetooth.BluetoothChangeReceiver">
+        <receiver
+            android:name=".bluetooth.BluetoothChangeReceiver">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
