@@ -1,14 +1,11 @@
 package de.uni_oldenburg.carfinder.fragments;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,7 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
@@ -30,8 +26,6 @@ import java.util.Calendar;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -62,12 +56,9 @@ public class NewParkingSpotFragment extends Fragment {
     private EditText parkingSpotName;
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
 
-    private int hours;
-    private int minutes;
 
     private MainViewModel viewModel;
 
-    final private int RQS = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -165,26 +156,21 @@ public class NewParkingSpotFragment extends Fragment {
      */
     private void startCameraForPicture() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                // Create the File where the photo should go
-                File photoFile = null;
-                try {
-                    photoFile = PhotoUtils.createImageFile(getActivity());
-                    this.viewModel.getParkingSpot().setImageLocation(photoFile.getAbsolutePath());
-                } catch (IOException ex) {
-                    return; //TODO: handle
-                }
-                // Continue only if the File was successfully created
-                if (photoFile != null) {
-                    Uri photoURI = FileProvider.getUriForFile(getActivity(), Constants.FILEPROVIDER_AUTHORITY, photoFile);
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
-                }
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile;
+            try {
+                photoFile = PhotoUtils.createImageFile(getActivity());
+                this.viewModel.getParkingSpot().setImageLocation(photoFile.getAbsolutePath());
+            } catch (IOException ex) {
+                return; //TODO: handle
             }
-        }else{
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},Constants.REQUEST_IMAGE_CAPTURE);
-            startCameraForPicture();
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getActivity(), Constants.FILEPROVIDER_AUTHORITY, photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, Constants.REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 
@@ -222,60 +208,34 @@ public class NewParkingSpotFragment extends Fragment {
      */
     private void addClock() {
         Calendar cal_now = Calendar.getInstance();
-        Calendar cal_alarm = (Calendar) cal_now.clone();
+        Calendar calAlarm = (Calendar) cal_now.clone();
         //Set up TimePickerDialog
-        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker timePicker, int hourOfDay, int minutes) {
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), (timePicker, hourOfDay, minutes) -> {
 
-                cal_alarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                cal_alarm.set(Calendar.MINUTE, minutes);
-                cal_alarm.set(Calendar.SECOND, 0);
-                cal_alarm.set(Calendar.MILLISECOND, 0);
+            calAlarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calAlarm.set(Calendar.MINUTE, minutes);
+            calAlarm.set(Calendar.SECOND, 0);
+            calAlarm.set(Calendar.MILLISECOND, 0);
 
-                if(cal_alarm.compareTo(cal_now) <= 0){
-                    cal_alarm.add(Calendar.DATE, 1);
-                }
-
-                //NewParkingSpotFragment.this.viewModel.getParkingSpot().setExpiresAt((long)(hourOfDay + minutes));
-                //NewParkingSpotFragment.this.clockTextView.setText(Long.toString(hourOfDay + minutes));
-
-                setMinutes(minutes);
-                setHours(hourOfDay);
-                setAlarm(cal_alarm);
+            if (calAlarm.compareTo(cal_now) <= 0) {
+                calAlarm.add(Calendar.DATE, 1);
             }
+
+            setAlarm(calAlarm);
         }, 0, 0, false);
         timePickerDialog.show();
-
-        //Create Alarm
-        AlarmManager alarmManager = (AlarmManager) this.getContext().getSystemService(Context.ALARM_SERVICE);
     }
 
-    private void setAlarm(Calendar targetCal){
-        NewParkingSpotFragment.this.clockTextView.setText("Parkuhr wurde auf" + targetCal.getTime() +"gesetzt!");
+    private void setAlarm(Calendar targetCal) {
+        //TODO: Database
+        NewParkingSpotFragment.this.clockTextView.setText("Parkuhr wurde auf " + targetCal.getTime() + " gesetzt!");
         Intent intent = new Intent(getActivity().getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), RQS, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
     }
 
 
 
-
-    private void setMinutes(int minutes){
-        this.minutes = minutes;
-    }
-
-    private void setHours(int hours){
-        this.hours = hours;
-    }
-
-    private int getMinutes(){
-        return this.minutes;
-    }
-
-    private int getHours(){
-        return this.hours;
-    }
 
 }
