@@ -23,6 +23,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
@@ -39,6 +40,7 @@ import de.uni_oldenburg.carfinder.util.PhotoUtils;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 
 import static android.app.Activity.RESULT_OK;
+import static android.content.Context.ALARM_SERVICE;
 
 public class NewParkingSpotFragment extends Fragment {
 
@@ -224,15 +226,28 @@ public class NewParkingSpotFragment extends Fragment {
             setAlarm(calAlarm);
         }, 0, 0, false);
         timePickerDialog.show();
+        Date date = cal_now.getTime();
+
+
     }
 
     private void setAlarm(Calendar targetCal) {
         //TODO: Database
         NewParkingSpotFragment.this.clockTextView.setText("Parkuhr wurde auf " + targetCal.getTime() + " gesetzt!");
         Intent intent = new Intent(getActivity().getBaseContext(), AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
+
+    }
+
+    private void cancelAlarm(){
+        //TODO: Notification
+        AlarmManager alarmManager = (AlarmManager) this.getContext().getSystemService(ALARM_SERVICE);
+        Intent intent = new Intent(this.getActivity().getBaseContext(), AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        alarmManager.cancel(pendingIntent);
+
     }
 
 
