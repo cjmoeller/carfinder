@@ -126,14 +126,9 @@
                 android:orientation="vertical"
                 android:padding="5dp">
 
-                <ImageView
-                    android:id="@+id/imageView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    app:srcCompat="@android:drawable/ic_menu_add" />
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/detailsParkingMeter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/add_clock"

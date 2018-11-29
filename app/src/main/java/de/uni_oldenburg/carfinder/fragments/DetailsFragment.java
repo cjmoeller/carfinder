@@ -24,7 +24,7 @@ public class DetailsFragment extends Fragment {
     private ImageView picture;
     private View rootView;
     private ParkingSpot data;
-
+    private TextView parkingMeter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,6 +57,15 @@ public class DetailsFragment extends Fragment {
         Date currentDate = new Date(data.getTimestamp());
         String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
 
+        if (this.data.getExpiresAt() != -1) {
+            Date parkingMeter = new Date(this.data.getExpiresAt());
+            String parkingMeterString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(parkingMeter);
+
+            this.parkingMeter.setText(getString(R.string.parking_meter_expires) + " " + parkingMeterString);
+        } else {
+            this.parkingMeter.setText(getString(R.string.parking_meter_not_set));
+        }
+
         this.addedTime.setText(getString(R.string.added_on) + dateString);
         this.notes.setText(data.getDescription());
 
@@ -73,6 +82,7 @@ public class DetailsFragment extends Fragment {
         this.addedTime = rootView.findViewById(R.id.detailsTimeAdded);
         this.picture = rootView.findViewById(R.id.detailsPicture);
         this.notes = rootView.findViewById(R.id.detailsNote);
+        this.parkingMeter = rootView.findViewById(R.id.detailsParkingMeter);
 
     }
 

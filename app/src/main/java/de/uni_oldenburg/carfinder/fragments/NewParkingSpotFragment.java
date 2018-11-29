@@ -24,7 +24,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.Date;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
@@ -39,9 +38,6 @@ import de.uni_oldenburg.carfinder.util.AlarmReceiver;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.util.PhotoUtils;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
-
-import static android.app.Activity.RESULT_OK;
-import static android.content.Context.ALARM_SERVICE;
 
 public class NewParkingSpotFragment extends Fragment {
 
@@ -149,7 +145,7 @@ public class NewParkingSpotFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             PhotoUtils.loadFileIntoImageView(this.pictureImageView, this.viewModel.getParkingSpot().getImageLocation());
         }
     }
@@ -214,7 +210,6 @@ public class NewParkingSpotFragment extends Fragment {
         Calendar calAlarm = (Calendar) cal_now.clone();
         //Set up TimePickerDialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), (timePicker, hourOfDay, minutes) -> {
-
             calAlarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calAlarm.set(Calendar.MINUTE, minutes);
             calAlarm.set(Calendar.SECOND, 0);
@@ -232,13 +227,14 @@ public class NewParkingSpotFragment extends Fragment {
     }
 
     private void setAlarm(Calendar targetCal) {
-        //TODO: Database
-        NewParkingSpotFragment.this.clockTextView.setText("Parkuhr wurde auf " + targetCal.getTime() + " gesetzt!");
+        this.clockTextView.setText(getString(R.string.parking_meter_set) + targetCal.getTime());
         Intent intent = new Intent(getActivity().getBaseContext(), AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
+        this.viewModel.getParkingSpot().setExpiresAt(targetCal.getTimeInMillis());
         Toast.makeText(this.getContext(), "Alarm wurde erstellt!", Toast.LENGTH_LONG).show();
+
 
     }
 

@@ -37,4 +37,7 @@
     <string name="dialog_enter_note">Enter a note:</string>
     <string name="display_more_information">"Tippen Sie auf ein Element aus der Liste um Details anzuzeigen. "</string>
     <string name="notify_park_clock">Your Parking Meter is expired!</string>
+    <string name="parking_meter_set">Parkuhr wurde gesetzt auf:</string>
+    <string name="parking_meter_expires">Parkuhr gesetzt für: </string>
+    <string name="parking_meter_not_set">Parkuhr nicht vorhanden.</string>
 </resources>

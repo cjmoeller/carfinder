@@ -36,4 +36,7 @@
     <string name="dialog_enter_note">Enter a note:</string>
     <string name="display_more_information">Click on a History element to display more Information.</string>
     <string name="notify_park_clock">Your Parking Meter is expired!</string>
+    <string name="parking_meter_set">Parking meter was set to:</string>
+    <string name="parking_meter_expires">Parking meter expires at </string>
+    <string name="parking_meter_not_set">Parking meter was not set.</string>
 </resources>
