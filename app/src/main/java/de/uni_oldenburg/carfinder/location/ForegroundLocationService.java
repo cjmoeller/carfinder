@@ -29,6 +29,7 @@ import androidx.core.app.NotificationManagerCompat;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.util.GeoUtils;
 
 /**
  * This service is started to receive an accurate location very fast.
@@ -37,6 +38,9 @@ import de.uni_oldenburg.carfinder.util.Constants;
 public class ForegroundLocationService extends Service {
 
     private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private List<Location> locationList;
+
 
     @Nullable
     @Override
@@ -46,6 +50,8 @@ public class ForegroundLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        this.locationList = new ArrayList<>();
+
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -88,41 +94,10 @@ public class ForegroundLocationService extends Service {
         return Service.START_STICKY;
     }
 
+
     private void onLocationFinished(Location location, LocationCallback cb) {
-        Address address = this.getAddressFromLocation(location);
-        ArrayList<String> addressFragments = new ArrayList<>();
-
-        if (address != null) {
-            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
-            }
-
-            String addressString = TextUtils.join(System.getProperty("line.separator"),
-                    addressFragments);
-
-
-            Intent notifyIntent = new Intent(this, MainActivity.class);
-            notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);
-            notifyIntent.putExtra(Constants.ADDRESS_EXTRA, address);
-            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
-                    this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
-            );
-
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
-                    .setSmallIcon(R.drawable.car)
-                    .setContentTitle(getString(R.string.notify_auto_title))
-                    .setStyle(new NotificationCompat.BigTextStyle()
-                            .bigText(getString(R.string.notify_auto_content) + addressString + "?"))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(notifyPendingIntent);
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-
-            notificationManager.notify(Constants.NOTIFICATION_ID_PARKING_DETECTED, mBuilder.build());
-            stopForeground(true);
-            fusedLocationClient.removeLocationUpdates(cb);
-        }
+        this.locationCallback = cb;
+        this.locationList.add(location);
     }
 
     /**
@@ -155,5 +130,46 @@ public class ForegroundLocationService extends Service {
             return address;
         }
         return null;
+    }
+
+    @Override
+    public void onDestroy() {
+
+        Address address = this.getAddressFromLocation(GeoUtils.getTransitionLocation(locationList));
+        ArrayList<String> addressFragments = new ArrayList<>();
+
+        if (address != null) {
+            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
+
+            String addressString = TextUtils.join(System.getProperty("line.separator"),
+                    addressFragments);
+
+
+            Intent notifyIntent = new Intent(this, MainActivity.class);
+            notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);
+            notifyIntent.putExtra(Constants.ADDRESS_EXTRA, address);
+            notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent notifyPendingIntent = PendingIntent.getActivity(
+                    this, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT
+            );
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
+                    .setSmallIcon(R.drawable.car)
+                    .setContentTitle(getString(R.string.notify_auto_title))
+                    .setStyle(new NotificationCompat.BigTextStyle()
+                            .bigText(getString(R.string.notify_auto_content) + addressString + "?"))
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT).setContentIntent(notifyPendingIntent);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+            notificationManager.notify(Constants.NOTIFICATION_ID_PARKING_DETECTED, mBuilder.build());
+
+
+        }
+
+        stopForeground(true);
+        fusedLocationClient.removeLocationUpdates(this.locationCallback);
     }
 }
