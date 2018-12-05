@@ -7,6 +7,11 @@
             android:key="pref_key_auto_recognition"
             android:summary="@string/settings_desc_auto"
             android:title="@string/settings_tl_auto"
+            android:defaultValue="true" />
+        <CheckBoxPreference
+            android:key="pref_key_enhanced_recognition"
+            android:summary="@string/pref_desc_enhanced"
+            android:title="@string/pref_title_enhanced"
             android:defaultValue="false" />
         <Preference
             android:key="pref_key_sms_delete_limit"

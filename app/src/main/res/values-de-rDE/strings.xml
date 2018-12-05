@@ -40,4 +40,6 @@
     <string name="parking_meter_set">Parkuhr wurde gesetzt auf:</string>
     <string name="parking_meter_expires">Parkuhr gesetzt für: </string>
     <string name="parking_meter_not_set">Parkuhr nicht vorhanden.</string>
+    <string name="pref_desc_enhanced">Wirkt sich ggf. auf Akkulaufzeit aus.</string>
+    <string name="pref_title_enhanced">Verbesserte Autodetektion (experimentell)</string>
 </resources>

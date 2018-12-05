@@ -40,7 +40,7 @@ public class ForegroundLocationService extends Service {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private List<Location> locationList;
-
+    private boolean isEnhancedMode = false;
 
     @Nullable
     @Override
@@ -51,6 +51,7 @@ public class ForegroundLocationService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.locationList = new ArrayList<>();
+        this.isEnhancedMode = intent.getBooleanExtra(Constants.EXTRA_ENHANCED_DETECTION, false);
 
         Intent notificationIntent = new Intent(this, MainActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -99,6 +100,9 @@ public class ForegroundLocationService extends Service {
         this.locationCallback = cb;
         Log.i(Constants.LOG_TAG, "Added location to list.");
         this.locationList.add(location);
+        if (!this.isEnhancedMode) {
+            this.stopSelf();
+        }
     }
 
     /**
@@ -173,4 +177,6 @@ public class ForegroundLocationService extends Service {
         stopForeground(true);
         fusedLocationClient.removeLocationUpdates(this.locationCallback);
     }
+
+
 }

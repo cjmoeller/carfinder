@@ -21,4 +21,5 @@ public class Constants {
     public static final String ARGUMENT_SPOT_LIST = "arg-spots";
     public static final int RC_SIGN_IN = 20;
     public static final int ALARM_REQUEST_CODE = 21;
+    public static final String EXTRA_ENHANCED_DETECTION = "IS_ENHANCED_MODE_EXTRA";
 }
