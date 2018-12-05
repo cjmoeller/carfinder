@@ -50,6 +50,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
+import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
 import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.requestActivityTransitionUpdates(this);
         this.createNotificationChannel();
 
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
@@ -112,10 +114,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
 
         }
-
-        //ParkingSpot test = new ParkingSpot(System.currentTimeMillis(), "Parkplatzname", "Links neben LIDL", null, true, -1, 53, 8, "Adresse 23, 27123 Stadt");
-        //ParkingSpotDatabaseManager.insertParkingSpot(test, this);
-
 
     }
 

@@ -71,8 +71,8 @@ public class ForegroundLocationService extends Service {
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         LocationRequest request = new LocationRequest();
-        request.setInterval(10000); // 10s interval
-        request.setFastestInterval(10000);
+        request.setInterval(5000); // 5s interval
+        request.setFastestInterval(5000);
 
         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
@@ -97,6 +97,7 @@ public class ForegroundLocationService extends Service {
 
     private void onLocationFinished(Location location, LocationCallback cb) {
         this.locationCallback = cb;
+        Log.i(Constants.LOG_TAG, "Added location to list.");
         this.locationList.add(location);
     }
 

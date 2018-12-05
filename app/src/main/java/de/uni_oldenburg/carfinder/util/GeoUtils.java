@@ -5,10 +5,11 @@ import android.location.Location;
 import java.util.List;
 
 public class GeoUtils {
-    public final static int TRANSITION_SPEED_CONSTANT = 10;
+    public final static float TRANSITION_SPEED_CONSTANT = 8f / 3.6f; //8 km/h in m/s
 
     /**
      * Finds transitions in speed. Location should be measured each ~10 seconds
+     *
      * @param locations
      * @return
      */
@@ -26,6 +27,6 @@ public class GeoUtils {
             }
             last = locations.get(i).getSpeed();
         }
-        return null;
+        return locations.get(locations.size() - 1);
     }
 }
