@@ -224,7 +224,7 @@ public class NewParkingSpotFragment extends Fragment {
         SharedPreferences pref_minutes = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         String minutes_string = pref_minutes.getString("pref_key_set_parking_meter", "");
         int minutes_value;
-        if(minutes_string != "Auto"){
+        if(minutes_string != "Auto" || minutes_string != null){
             minutes_value = Integer.parseInt(minutes_string);
         }else{
             minutes_value = 0;
@@ -243,6 +243,7 @@ public class NewParkingSpotFragment extends Fragment {
             //Save Time in ViewModel/ParkingSpot
             long expiresAt = calAlarm.getTimeInMillis();
             viewModel.getParkingSpot().setExpiresAt(expiresAt);
+            this.clockTextView.setText(getString(R.string.parking_meter_set) + calAlarm.getTime());
         }, 0, 0, true);
         timePickerDialog.show();
 
@@ -250,7 +251,6 @@ public class NewParkingSpotFragment extends Fragment {
     }
 
     private void setAlarm(Calendar targetCal) {
-        this.clockTextView.setText(getString(R.string.parking_meter_set) + targetCal.getTime());
         Intent intent = new Intent(getActivity().getBaseContext(), AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
