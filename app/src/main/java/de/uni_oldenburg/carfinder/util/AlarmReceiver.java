@@ -12,9 +12,6 @@ import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
-
-    //https://stackoverflow.com/questions/5746582/implementing-snooze-in-android-notifications
-    //https://nnish.com/2014/12/16/scheduled-notifications-in-android-using-alarm-manager/
     @Override
     public void onReceive(Context context, Intent intent) {
         Vibrator vib = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);

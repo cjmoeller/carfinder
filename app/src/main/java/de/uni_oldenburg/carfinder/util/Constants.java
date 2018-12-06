@@ -21,4 +21,5 @@ public class Constants {
     public static final String ARGUMENT_SPOT_LIST = "arg-spots";
     public static final int RC_SIGN_IN = 20;
     public static final int ALARM_REQUEST_CODE = 21;
+    public static final int PARKING_METER_PREFERENCE_ENTRIES = 6;
 }

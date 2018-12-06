@@ -20,6 +20,16 @@
             android:key="pref_key_bluetooth_device"
             android:summary="@string/settings_desc_bldevice"
             android:title="@string/settings_tl_bldevice" />
+        <CheckBoxPreference
+            android:key="pref_key_parking_meter"
+            android:summary="Remind me earlier!"
+            android:title="Parking Meter"
+            android:defaultValue="true"/>
+        <ListPreference
+            android:key="pref_key_set_parking_meter"
+            android:summary="Set Time to set up Alarm earlier"
+            android:title="Parking Meter Timer"
+            android:defaultValue="2"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/settings_cat_other"

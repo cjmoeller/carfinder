@@ -6,8 +6,11 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.ListPreference;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +36,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
+import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.AlarmReceiver;
 import de.uni_oldenburg.carfinder.util.Constants;
@@ -102,6 +106,13 @@ public class NewParkingSpotFragment extends Fragment {
                 this.bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
 
+            long millisAlarm = viewModel.getParkingSpot().getExpiresAt();
+            if(millisAlarm != -1){
+                Calendar alarm = Calendar.getInstance();
+                alarm.setTimeInMillis(millisAlarm);
+                setAlarm(alarm);
+            }
+
         });
 
         pictureImageView = getActivity().findViewById(R.id.imageViewPicture);
@@ -138,6 +149,8 @@ public class NewParkingSpotFragment extends Fragment {
         this.viewModel.getCurrentPositionAddress().observe(this, addressObserver);
         this.viewModel.getMarkerPositionLat().observe(this, positionLatObserver);
         this.viewModel.getMarkerPositionLon().observe(this, positionLonObserver);
+
+        //
 
     }
 
@@ -208,18 +221,28 @@ public class NewParkingSpotFragment extends Fragment {
     private void addClock() {
         Calendar cal_now = Calendar.getInstance();
         Calendar calAlarm = (Calendar) cal_now.clone();
+        SharedPreferences pref_minutes = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+        String minutes_string = pref_minutes.getString("pref_key_set_parking_meter", "");
+        int minutes_value;
+        if(minutes_string != "Auto"){
+            minutes_value = Integer.parseInt(minutes_string);
+        }else{
+            minutes_value = 0;
+        }
         //Set up TimePickerDialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), (timePicker, hourOfDay, minutes) -> {
             calAlarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            calAlarm.set(Calendar.MINUTE, minutes);
+            calAlarm.set(Calendar.MINUTE, minutes - minutes_value);
             calAlarm.set(Calendar.SECOND, 0);
             calAlarm.set(Calendar.MILLISECOND, 0);
+
 
             if (calAlarm.compareTo(cal_now) <= 0) {
                 calAlarm.add(Calendar.DATE, 1);
             }
-
-            setAlarm(calAlarm);
+            //Save Time in ViewModel/ParkingSpot
+            long expiresAt = calAlarm.getTimeInMillis();
+            viewModel.getParkingSpot().setExpiresAt(expiresAt);
         }, 0, 0, true);
         timePickerDialog.show();
 
