@@ -2,15 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="de.uni_oldenburg.carfinder">
 
-    <uses-permission android:name="android.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -19,8 +19,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="de.uni_oldenburg.carfinder.fileprovider"
@@ -28,19 +26,19 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
-
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD3T_RlOwz_oWjdH4LtQHMdKfRT8Nq_oCA" />
 
         <activity
-            android:name="de.uni_oldenburg.carfinder.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,26 +63,31 @@
         </activity>
 
         <receiver
-            android:name="de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver"
+            android:name=".location.ActivityTransitionChangeReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="de.uni_oldenburg.carfinder.TRANSITION"></action>
+                <action android:name="de.uni_oldenburg.carfinder.TRANSITION" />
             </intent-filter>
-
         </receiver>
-        <receiver
-            android:name=".bluetooth.BluetoothChangeReceiver">
+        <receiver android:name=".bluetooth.BluetoothChangeReceiver">
             <intent-filter>
                 <action android:name="android.bluetooth.device.action.ACL_CONNECTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECT_REQUESTED" />
                 <action android:name="android.bluetooth.device.action.ACL_DISCONNECTED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".util.AlarmReceiver" />
 
         <service android:name=".location.ForegroundLocationService" />
         <service android:name=".location.geocoding.FetchAddressIntentService" />
+
+        <service android:name=".util.DataLayerListenerService">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <data android:scheme="wear" android:host="*"
+                    android:path="/park" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -45,6 +45,8 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel:2.0.0-rc01'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0-rc01'
 
+    implementation 'com.google.android.gms:play-services-wearable:16.0.1'
+
     implementation 'com.google.firebase:firebase-core:16.0.5'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     implementation 'com.firebaseui:firebase-ui-auth:4.2.1'
