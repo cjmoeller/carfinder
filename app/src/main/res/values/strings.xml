@@ -39,4 +39,6 @@
     <string name="parking_meter_set">Parking meter was set to:</string>
     <string name="parking_meter_expires">Parking meter expires at </string>
     <string name="parking_meter_not_set">Parking meter was not set.</string>
+    <string name="pref_desc_enhanced">May drain the battery faster.</string>
+    <string name="pref_title_enhanced">Enhanced auto-detection (experimental)</string>
 </resources>
