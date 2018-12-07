@@ -83,7 +83,7 @@
 
         <service android:name=".util.DataLayerListenerService">
             <intent-filter>
-                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
                 <data android:scheme="wear" android:host="*"
                     android:path="/park" />
             </intent-filter>

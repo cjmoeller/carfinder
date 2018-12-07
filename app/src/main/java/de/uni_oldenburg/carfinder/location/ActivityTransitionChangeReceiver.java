@@ -31,7 +31,7 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
             }
             if (entering && enhancedMode) {
                 Intent startService = new Intent(context, ForegroundLocationService.class);
-                startService.putExtra(Constants.EXTRA_ENHANCED_DETECTION, true);
+                startService.putExtra(Constants.EXTRA_LOCATION_MODE, Constants.LOCATION_MODE_ENHANCED);
                 ContextCompat.startForegroundService(context, startService);
             } else {
                 if (enhancedMode) {
@@ -39,7 +39,6 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
                     context.stopService(stopService);
                 } else {
                     Intent startService = new Intent(context, ForegroundLocationService.class);
-                    startService.putExtra(Constants.EXTRA_ENHANCED_DETECTION, true);
                     ContextCompat.startForegroundService(context, startService);
 
                 }
