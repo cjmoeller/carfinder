@@ -7,10 +7,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -33,12 +36,14 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,16 +55,23 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
-import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
-import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver;
 import de.uni_oldenburg.carfinder.fragments.ExistingParkingSpotFragment;
 import de.uni_oldenburg.carfinder.fragments.NewParkingSpotFragment;
 import de.uni_oldenburg.carfinder.location.ActivityTransitionChangeReceiver;
+import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver;
 import de.uni_oldenburg.carfinder.location.geocoding.FetchAddressIntentService;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
+import de.uni_oldenburg.carfinder.places.GooglePlaces;
+import de.uni_oldenburg.carfinder.places.PlacesResult;
+import de.uni_oldenburg.carfinder.places.Result;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.util.FileLogger;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -71,17 +83,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ProgressBar progressBar;
     private NewParkingSpotFragment newParkingSpotFragment;
     private Marker currentMarker;
+    private List<Marker> publicParkingSpots;
+    private Bitmap publicParkingIcon;
+
+    //TODO: make this nicer
+    private boolean loadedPlaces = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        FileLogger.init(storageDir.getAbsolutePath());
 
         Toolbar myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         this.initUI();
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+        //Loading icon for parking spots
+        publicParkingIcon = BitmapFactory.decodeResource(this.getResources(),
+                R.drawable.parking);
+        publicParkingIcon = Bitmap.createScaledBitmap(
+                publicParkingIcon, 100, 100, false); //TODO: fit to device size
+        this.publicParkingSpots = new ArrayList<>();
 
         //MainActivity was started from "automatically detected parking spot" notification.
         if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
@@ -105,8 +131,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.createNotificationChannel();
 
 
+        //Geo related stuff:
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         if (viewModel.alreadyCheckedDatabase()) {
             this.loadExistingParkingSpotFragment();
@@ -407,6 +436,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.viewModel.getMarkerPositionLat().postValue(location.getLatitude());
         this.viewModel.getMarkerPositionLon().postValue(location.getLongitude());
         this.viewModel.getCurrentPositionAddress().postValue(address);
+
+        //TODO: Move this to a better place
+        if(!this.loadedPlaces) {
+            GooglePlaces.getInstance().getNearbyParkingPlaces(location.getLatitude(), location.getLongitude(), new Callback<PlacesResult>() {
+                @Override
+                public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
+                    for (Marker m : MainActivity.this.publicParkingSpots)
+                        m.remove();
+                    for (Result r : response.body().getResults()) {
+                        Log.i(Constants.LOG_TAG, r.getName() + ": " + r.getGeometry().getLocation().getLat() + ", " + r.getGeometry().getLocation().getLng());
+
+                        LatLng pos = new LatLng(r.getGeometry().getLocation().getLat(), r.getGeometry().getLocation().getLng());
+
+                        MainActivity.this.publicParkingSpots.add(MainActivity.this.mMap.addMarker(new MarkerOptions().position(pos)
+                                .title(r.getName()).icon(BitmapDescriptorFactory.fromBitmap(MainActivity.this.publicParkingIcon))));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<PlacesResult> call, Throwable t) {
+                    Log.e(Constants.LOG_TAG, "Failed to query Places API:"+ t.getLocalizedMessage());
+                }
+            });
+            this.loadedPlaces = true;
+        }
 
         return null;
     }

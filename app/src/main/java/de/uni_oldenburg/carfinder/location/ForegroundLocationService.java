@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationServices;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +32,7 @@ import de.uni_oldenburg.carfinder.activities.MainActivity;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.util.FileLogger;
 import de.uni_oldenburg.carfinder.util.GeoUtils;
 
 /**
@@ -52,6 +54,7 @@ public class ForegroundLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        FileLogger.getInstance().log(new Date().toString() + ": Starting ForegroundLocationService in Mode: " + this.mode);
         this.locationList = new ArrayList<>();
         this.mode = intent.getIntExtra(Constants.EXTRA_LOCATION_MODE, Constants.LOCATION_MODE_NORMAL);
 
@@ -152,7 +155,7 @@ public class ForegroundLocationService extends Service {
 
             String addressString = TextUtils.join(System.getProperty("line.separator"),
                     addressFragments);
-
+            FileLogger.getInstance().log(new Date().toString() + ": Result of ForegroundLocation was: " + addressString);
             if (this.mode != Constants.LOCATION_MODE_PERSIST_DIRECTLY) {
                 Intent notifyIntent = new Intent(this, MainActivity.class);
                 notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);

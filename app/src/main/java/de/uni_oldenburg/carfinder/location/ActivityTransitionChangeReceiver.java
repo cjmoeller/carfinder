@@ -10,8 +10,11 @@ import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionResult;
 
+import java.util.Date;
+
 import androidx.core.content.ContextCompat;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.util.FileLogger;
 
 
 public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
@@ -25,10 +28,13 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
             boolean entering = false;
             for (ActivityTransitionEvent event : result.getTransitionEvents()) {
+                FileLogger.getInstance().log(new Date().toString() + ": Received Activity transition: " + event.toString());
+
                 if (event.getTransitionType() == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                     entering = true;
                 }
             }
+            FileLogger.getInstance().log("Enhanced mode enabled: " + enhancedMode);
             if (entering && enhancedMode) {
                 Intent startService = new Intent(context, ForegroundLocationService.class);
                 startService.putExtra(Constants.EXTRA_LOCATION_MODE, Constants.LOCATION_MODE_ENHANCED);
