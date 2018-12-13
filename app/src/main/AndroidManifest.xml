@@ -80,6 +80,7 @@
 
         <service android:name=".location.ForegroundLocationService" />
         <service android:name=".location.geocoding.FetchAddressIntentService" />
+        <service android:name=".location.TimePickerLocationService" />
 
         <service android:name=".util.DataLayerListenerService">
             <intent-filter>

@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -36,6 +37,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
+import de.uni_oldenburg.carfinder.location.TimePickerLocationService;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.AlarmReceiver;
@@ -111,6 +113,12 @@ public class NewParkingSpotFragment extends Fragment {
                 Calendar alarm = Calendar.getInstance();
                 alarm.setTimeInMillis(millisAlarm);
                 setAlarm(alarm);
+
+                //create and start intent for TimePickerLocationService
+                Intent intent = new Intent(this.getContext(), TimePickerLocationService.class);
+                intent.putExtra("lat", this.viewModel.getParkingSpot().getLatitude());
+                intent.putExtra("lon", this.viewModel.getParkingSpot().getLongitude());
+                getActivity().startService(intent);
             }
 
         });
@@ -257,9 +265,8 @@ public class NewParkingSpotFragment extends Fragment {
         alarmManager.set(AlarmManager.RTC_WAKEUP, targetCal.getTimeInMillis(), pendingIntent);
         this.viewModel.getParkingSpot().setExpiresAt(targetCal.getTimeInMillis());
         Toast.makeText(this.getContext(), "Alarm wurde erstellt!", Toast.LENGTH_LONG).show();
-
-
     }
+
 
 
 

@@ -26,5 +26,6 @@ public class Constants {
     public static final int LOCATION_MODE_NORMAL = 0;
     public static final int LOCATION_MODE_ENHANCED = 1;
     public static final int LOCATION_MODE_PERSIST_DIRECTLY = 2;
+    public static final int WALKINGSPEED_PER_MINUTE = 60;
 
 }
