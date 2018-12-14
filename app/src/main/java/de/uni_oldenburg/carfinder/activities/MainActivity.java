@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //TODO: make this nicer
     private boolean loadedPlaces = false;
+    private boolean initializedOwnPosition = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -389,8 +390,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (mMap != null) {
             if (this.currentMarker != null)
                 this.currentMarker.remove();
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                    new LatLng(lat, lon), Constants.DEFAULT_ZOOM));
+            if (!this.initializedOwnPosition) { //Find a better solution
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lat, lon), Constants.DEFAULT_ZOOM));
+                this.initializedOwnPosition = true;
+            }
             // Add a marker in Germany, and move the camera.
             LatLng position = new LatLng(lat, lon);
             this.currentMarker = mMap.addMarker(new MarkerOptions().position(position).title(title));
@@ -438,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.viewModel.getCurrentPositionAddress().postValue(address);
 
         //TODO: Move this to a better place
-        if(!this.loadedPlaces) {
+        if (!this.loadedPlaces) {
             GooglePlaces.getInstance().getNearbyParkingPlaces(location.getLatitude(), location.getLongitude(), new Callback<PlacesResult>() {
                 @Override
                 public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
@@ -456,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 @Override
                 public void onFailure(Call<PlacesResult> call, Throwable t) {
-                    Log.e(Constants.LOG_TAG, "Failed to query Places API:"+ t.getLocalizedMessage());
+                    Log.e(Constants.LOG_TAG, "Failed to query Places API:" + t.getLocalizedMessage());
                 }
             });
             this.loadedPlaces = true;
