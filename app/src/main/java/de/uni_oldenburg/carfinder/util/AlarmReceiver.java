@@ -1,5 +1,6 @@
 package de.uni_oldenburg.carfinder.util;
 
+import android.app.Application;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
+import de.uni_oldenburg.carfinder.location.TimePickerLocationService;
 
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
@@ -30,6 +32,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(1, mBuilder.build());
+
+        Intent serviceIntent = new Intent(context, TimePickerLocationService.class);
+        context.stopService(serviceIntent);
     }
 
 }
