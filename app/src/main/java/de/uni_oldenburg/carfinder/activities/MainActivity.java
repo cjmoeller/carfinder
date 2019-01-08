@@ -1,11 +1,13 @@
 package de.uni_oldenburg.carfinder.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +16,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -82,13 +85,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ExistingParkingSpotFragment existingParkingSpotFragment;
     private ProgressBar progressBar;
     private NewParkingSpotFragment newParkingSpotFragment;
-    private Marker currentMarker;
-    private List<Marker> publicParkingSpots;
     private Bitmap publicParkingIcon;
+    private Marker currentMarker;
 
     //TODO: make this nicer
-    private boolean loadedPlaces = false;
     private boolean initializedOwnPosition = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,12 +105,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.initUI();
         viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
+        this.initializeObservers();
+
         //Loading icon for parking spots
         publicParkingIcon = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.parking);
         publicParkingIcon = Bitmap.createScaledBitmap(
                 publicParkingIcon, 100, 100, false); //TODO: fit to device size
-        this.publicParkingSpots = new ArrayList<>();
 
         //MainActivity was started from "automatically detected parking spot" notification.
         if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Task task = ActivityRecognition.getClient(context)
                 .requestActivityTransitionUpdates(request, pendingIntent);
         task.addOnFailureListener(
-                e -> Toast.makeText(MainActivity.this, getString(R.string.activity_recognition_na), Toast.LENGTH_LONG).show()); //TODO: Use Snackbar
+                e -> Toast.makeText(MainActivity.this, getString(R.string.activity_recognition_na), Toast.LENGTH_LONG).show());
 
     }
 
@@ -214,39 +217,38 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        final Observer<Double> positionLatObserver = newLat -> {
-            if (viewModel.getMarkerPositionLon().getValue() != null) {
-                if (this.viewModel.isParkingSpotSaved())
-                    displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), this.viewModel.getParkingSpot().getName());
-                else
-                    displayMarkerOnMap(newLat, MainActivity.this.viewModel.getMarkerPositionLon().getValue(), getString(R.string.own_position));
-            }
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        };
-        final Observer<Double> positionLonObserver = newLon -> {
-            if (viewModel.getMarkerPositionLon().getValue() != null) {
-                if (this.viewModel.isParkingSpotSaved())
-                    displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, this.viewModel.getParkingSpot().getName());
-                else
-                    displayMarkerOnMap(MainActivity.this.viewModel.getMarkerPositionLat().getValue(), newLon, getString(R.string.own_position));
-            }
-
-        };
-
-        this.viewModel.getMarkerPositionLat().observe(this, positionLatObserver);
-        this.viewModel.getMarkerPositionLon().observe(this, positionLonObserver);
-
-
-        //Trigger the callback once to make sure the marker is displayed, when the DB was already loaded
-        //before attaching the callback. (TODO: Check if the callback is actually triggered)
-        Double lonValue = this.viewModel.getMarkerPositionLon().getValue();
-        if (lonValue != null)
-            this.viewModel.getMarkerPositionLon().postValue(lonValue);
-
+        this.viewModel.getIsMapLoaded().postValue(true);
     }
+
+
+    /**
+     * Displays a marker on given position on the map.
+     *
+     * @param lat
+     * @param lon
+     */
+    public void displayMarkerOnMap(double lat, double lon, String title) {
+        if (mMap != null) {
+            if (this.currentMarker != null)
+                this.currentMarker.remove();
+            if (!this.initializedOwnPosition) { //Find a better solution
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lat, lon), Constants.DEFAULT_ZOOM));
+                this.initializedOwnPosition = true;
+            }
+            // Add a marker in Germany, and move the camera.
+            LatLng position = new LatLng(lat, lon);
+            this.currentMarker = mMap.addMarker(new MarkerOptions().position(position).title(title));
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -268,17 +270,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return true;
 
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
-    }
-
-    public void initializeBottomSheetMenu() {
-        LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet);
-        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
-        sheetBehavior.setHideable(false);
     }
 
 
@@ -300,13 +294,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (currentSpot != null) {
             viewModel.setParkingSpot(currentSpot);
             viewModel.setParkingSpotSaved(true);
-            viewModel.getMarkerPositionLat().setValue(currentSpot.getLatitude());
-            viewModel.getMarkerPositionLon().setValue(currentSpot.getLongitude());
+            viewModel.getCurrentPositionLat().setValue(currentSpot.getLatitude());
+            viewModel.getCurrentPositionLon().setValue(currentSpot.getLongitude());
             loadExistingParkingSpotFragment();
         } else {
             viewModel.setParkingSpotSaved(false);
             displayLocation();
         }
+
+        this.viewModel.getIsDatabaseLoaded().postValue(true);
 
         return null;
     }
@@ -336,19 +332,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    /**
+     * Initializes the MainActivity UI.
+     */
     private void initUI() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
         this.progressBar = findViewById(R.id.progressBar);
-        this.initializeBottomSheetMenu();
+        LinearLayout bottomSheetLayout = findViewById(R.id.bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
+        sheetBehavior.setHideable(false);
     }
 
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationClient;
 
     /**
-     * Call this method to display the current location including the address.
+     * Call this method to display the current address and position in the UI.
      */
     public void displayLocation() {
 
@@ -377,27 +378,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
         } catch (SecurityException e) {
             Log.e(Constants.LOG_TAG, "No GPS Permission");
-        }
-    }
-
-    /**
-     * Displays a marker on given position on the map.
-     *
-     * @param lat
-     * @param lon
-     */
-    public void displayMarkerOnMap(double lat, double lon, String title) {
-        if (mMap != null) {
-            if (this.currentMarker != null)
-                this.currentMarker.remove();
-            if (!this.initializedOwnPosition) { //Find a better solution
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                        new LatLng(lat, lon), Constants.DEFAULT_ZOOM));
-                this.initializedOwnPosition = true;
-            }
-            // Add a marker in Germany, and move the camera.
-            LatLng position = new LatLng(lat, lon);
-            this.currentMarker = mMap.addMarker(new MarkerOptions().position(position).title(title));
         }
     }
 
@@ -437,36 +417,68 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         //Update the LiveData to display the changes in UI
-        this.viewModel.getMarkerPositionLat().postValue(location.getLatitude());
-        this.viewModel.getMarkerPositionLon().postValue(location.getLongitude());
+        this.viewModel.getCurrentPositionLat().postValue(location.getLatitude());
+        this.viewModel.getCurrentPositionLon().postValue(location.getLongitude());
         this.viewModel.getCurrentPositionAddress().postValue(address);
+        this.viewModel.getIsPositionReady().postValue(true);
 
-        //TODO: Move this to a better place
-        if (!this.loadedPlaces) {
-            GooglePlaces.getInstance().getNearbyParkingPlaces(location.getLatitude(), location.getLongitude(), new Callback<PlacesResult>() {
-                @Override
-                public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
-                    for (Marker m : MainActivity.this.publicParkingSpots)
-                        m.remove();
-                    for (Result r : response.body().getResults()) {
-                        Log.i(Constants.LOG_TAG, r.getName() + ": " + r.getGeometry().getLocation().getLat() + ", " + r.getGeometry().getLocation().getLng());
-
-                        LatLng pos = new LatLng(r.getGeometry().getLocation().getLat(), r.getGeometry().getLocation().getLng());
-
-                        MainActivity.this.publicParkingSpots.add(MainActivity.this.mMap.addMarker(new MarkerOptions().position(pos)
-                                .title(r.getName()).icon(BitmapDescriptorFactory.fromBitmap(MainActivity.this.publicParkingIcon))));
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<PlacesResult> call, Throwable t) {
-                    Log.e(Constants.LOG_TAG, "Failed to query Places API:" + t.getLocalizedMessage());
-                }
-            });
-            this.loadedPlaces = true;
-        }
 
         return null;
+    }
+
+    /**
+     * Initializes the Observers with it's callbacks that are called on special async events.
+     */
+    private void initializeObservers() {
+
+        this.viewModel.getIsMapLoaded().postValue(false);
+        this.viewModel.getIsDatabaseLoaded().postValue(false);
+        this.viewModel.getIsPositionReady().postValue(false);
+
+        final Observer<Boolean> loadingStateObserver = loaded -> {
+            if (loaded) {
+                //When everything is loaded: display the current parking spot, if available
+                if (viewModel.getCurrentPositionLon().getValue() != null) {
+                    if (this.viewModel.isParkingSpotSaved())
+                        displayMarkerOnMap(MainActivity.this.viewModel.getCurrentPositionLat().getValue(), MainActivity.this.viewModel.getCurrentPositionLon().getValue(), this.viewModel.getParkingSpot().getName());
+                }
+
+                //Load surrounding parking spots into the map.
+                SharedPreferences sharedPreferences =
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                Boolean showSpots = sharedPreferences.getBoolean("pref_key_surr_spots", false);
+
+                if (showSpots) {
+                    GooglePlaces.getInstance().getNearbyParkingPlaces(MainActivity.this.viewModel.getCurrentPositionLat().getValue(), MainActivity.this.viewModel.getCurrentPositionLon().getValue(), new Callback<PlacesResult>() {
+                        @Override
+                        public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
+                            for (Marker m : MainActivity.this.viewModel.getPublicParkingSpots())
+                                m.remove();
+                            for (Result r : response.body().getResults()) {
+                                Log.i(Constants.LOG_TAG, r.getName() + ": " + r.getGeometry().getLocation().getLat() + ", " + r.getGeometry().getLocation().getLng());
+
+                                LatLng pos = new LatLng(r.getGeometry().getLocation().getLat(), r.getGeometry().getLocation().getLng());
+
+                                MainActivity.this.viewModel.getPublicParkingSpots().add(MainActivity.this.mMap.addMarker(new MarkerOptions().position(pos)
+                                        .title(r.getName()).icon(BitmapDescriptorFactory.fromBitmap(MainActivity.this.publicParkingIcon))));
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<PlacesResult> call, Throwable t) {
+                            Log.e(Constants.LOG_TAG, "Failed to query Places API:" + t.getLocalizedMessage());
+                        }
+                    });
+                }
+
+                //Zoom to own Location
+                LatLng ownPosition = new LatLng(this.viewModel.getCurrentPositionLat().getValue(), this.viewModel.getCurrentPositionLon().getValue());
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ownPosition, Constants.DEFAULT_ZOOM));
+            }
+        };
+
+        this.viewModel.getIsLoadingDone().observe(this, loadingStateObserver);
+
     }
 
     @Override

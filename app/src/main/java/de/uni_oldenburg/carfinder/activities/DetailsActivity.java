@@ -13,15 +13,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.fragments.DetailsFragment;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.viewmodels.DetailsViewModel;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    //TODO: Viewmodel or save instance state
-    private ParkingSpot data;
+    private DetailsViewModel viewModel;
 
     private TextView address;
     private TextView position;
@@ -32,6 +34,8 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        this.viewModel = ViewModelProviders.of(this).get(DetailsViewModel.class);
+
         Toolbar myToolbar = findViewById(R.id.toolbar_details);
         setSupportActionBar(myToolbar);
 
@@ -39,7 +43,7 @@ public class DetailsActivity extends AppCompatActivity {
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        this.data = (ParkingSpot) this.getIntent().getSerializableExtra(Constants.EXTRA_PARKING_SPOT);
+        this.viewModel.setData((ParkingSpot) this.getIntent().getSerializableExtra(Constants.EXTRA_PARKING_SPOT));
 
         this.initUI();
     }
@@ -51,7 +55,7 @@ public class DetailsActivity extends AppCompatActivity {
         details.getLifecycle().addObserver(new LifecycleObserver() {
             @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
             public void detailsFragmentStarted() {
-                finalDetails.setData(data);
+                finalDetails.setData(DetailsActivity.this.viewModel.getData());
 
             }
         });
@@ -59,8 +63,8 @@ public class DetailsActivity extends AppCompatActivity {
         address = findViewById(R.id.detailsAddress);
         position = findViewById(R.id.detailsPos);
 
-        address.setText(this.data.getAddress());
-        position.setText(this.data.getLatitude() + ", " + this.data.getLongitude());
+        address.setText(this.viewModel.getData().getAddress());
+        position.setText(this.viewModel.getData().getLatitude() + ", " + this.viewModel.getData().getLongitude());
     }
 
     @Override
@@ -73,7 +77,7 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_map:
-                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + this.data.getLatitude() + "," + this.data.getLongitude() + "(" + this.data.getName() + ")" + "&z=" + Constants.DEFAULT_ZOOM);
+                Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + this.viewModel.getData().getLatitude() + "," + this.viewModel.getData().getLongitude() + "(" + this.viewModel.getData().getName() + ")" + "&z=" + Constants.DEFAULT_ZOOM);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 mapIntent.setPackage("com.google.android.apps.maps");
                 startActivity(mapIntent);
@@ -82,7 +86,7 @@ public class DetailsActivity extends AppCompatActivity {
                 Intent actionIntent = new Intent();
                 actionIntent.setAction(Intent.ACTION_SEND);
                 actionIntent.setType("text/plain");
-                actionIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + Constants.MAP_SHARE_URL + this.data.getLatitude() + "," + this.data.getLongitude());
+                actionIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text) + Constants.MAP_SHARE_URL + this.viewModel.getData().getLatitude() + "," + this.viewModel.getData().getLongitude());
                 this.startActivity(actionIntent);
                 return true;
             default:

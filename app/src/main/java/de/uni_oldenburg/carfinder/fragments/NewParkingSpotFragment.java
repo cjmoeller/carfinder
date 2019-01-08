@@ -7,10 +7,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.ListPreference;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -38,7 +36,6 @@ import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
 import de.uni_oldenburg.carfinder.location.TimePickerLocationService;
-import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.AlarmReceiver;
 import de.uni_oldenburg.carfinder.util.Constants;
@@ -155,8 +152,8 @@ public class NewParkingSpotFragment extends Fragment {
         final Observer<Double> positionLonObserver = newLon -> newLatLong.setText(this.viewModel.getParkingSpot().getLatitude() + ", " + newLon);
 
         this.viewModel.getCurrentPositionAddress().observe(this, addressObserver);
-        this.viewModel.getMarkerPositionLat().observe(this, positionLatObserver);
-        this.viewModel.getMarkerPositionLon().observe(this, positionLonObserver);
+        this.viewModel.getCurrentPositionLat().observe(this, positionLatObserver);
+        this.viewModel.getCurrentPositionLon().observe(this, positionLonObserver);
 
         //
 

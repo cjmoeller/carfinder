@@ -1,5 +1,11 @@
 package de.uni_oldenburg.carfinder.viewmodels;
 
+import com.google.android.gms.maps.model.Marker;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
@@ -10,18 +16,43 @@ public class MainViewModel extends ViewModel {
     private ParkingSpot parkingSpot;
     private boolean parkingSpotSaved;
 
-    private MutableLiveData<String> currentPositionAddress;
-    private MutableLiveData<Double> markerPositionLat;
-    private MutableLiveData<Double> markerPositionLon;
+    public List<Marker> getPublicParkingSpots() {
+        return publicParkingSpots;
+    }
 
+    private List<Marker> publicParkingSpots;
+
+
+    private MutableLiveData<String> currentPositionAddress;
+    private MutableLiveData<Double> currentPositionLat;
+    private MutableLiveData<Double> currentPositionLon;
+
+    //MainActivity States
+    private MutableLiveData<Boolean> isMapLoaded;
+    private MutableLiveData<Boolean> isDatabaseLoaded;
+    private MutableLiveData<Boolean> isPositionReady;
+    //merges all into one ready state:
+    private MediatorLiveData<Boolean> isLoadingDone;
 
     public MainViewModel() {
         parkingSpot = new ParkingSpot(0, "empty", "empty", null, false, -1, 0, 0, "empty");
         checkedDatabase = false;
         parkingSpotSaved = false;
         currentPositionAddress = new MutableLiveData<>();
-        markerPositionLat = new MutableLiveData<>();
-        markerPositionLon = new MutableLiveData<>();
+        currentPositionLat = new MutableLiveData<>();
+        currentPositionLon = new MutableLiveData<>();
+
+        isDatabaseLoaded = new MutableLiveData<>();
+        isMapLoaded = new MutableLiveData<>();
+        isPositionReady = new MutableLiveData<>();
+
+        isLoadingDone = new MediatorLiveData<>();
+        isLoadingDone.addSource(isDatabaseLoaded, value -> isLoadingDone.setValue(value && this.isPositionReady.getValue() && this.isMapLoaded.getValue()));
+        isLoadingDone.addSource(isPositionReady, value -> isLoadingDone.setValue(value && this.isDatabaseLoaded.getValue() && this.isMapLoaded.getValue()));
+        isLoadingDone.addSource(isMapLoaded, value -> isLoadingDone.setValue(value && this.isPositionReady.getValue() && this.isDatabaseLoaded.getValue()));
+
+        publicParkingSpots = new ArrayList<>();
+
     }
 
 
@@ -53,11 +84,43 @@ public class MainViewModel extends ViewModel {
         return currentPositionAddress;
     }
 
-    public MutableLiveData<Double> getMarkerPositionLat() {
-        return markerPositionLat;
+    public MutableLiveData<Double> getCurrentPositionLat() {
+        return currentPositionLat;
     }
 
-    public MutableLiveData<Double> getMarkerPositionLon() {
-        return markerPositionLon;
+    public MutableLiveData<Double> getCurrentPositionLon() {
+        return currentPositionLon;
+    }
+
+    public MutableLiveData<Boolean> getIsMapLoaded() {
+        return isMapLoaded;
+    }
+
+    public void setIsMapLoaded(MutableLiveData<Boolean> isMapLoaded) {
+        this.isMapLoaded = isMapLoaded;
+    }
+
+    public MutableLiveData<Boolean> getIsDatabaseLoaded() {
+        return isDatabaseLoaded;
+    }
+
+    public void setIsDatabaseLoaded(MutableLiveData<Boolean> isDatabaseLoaded) {
+        this.isDatabaseLoaded = isDatabaseLoaded;
+    }
+
+    public MutableLiveData<Boolean> getIsPositionReady() {
+        return isPositionReady;
+    }
+
+    public void setIsPositionReady(MutableLiveData<Boolean> isPositionReady) {
+        this.isPositionReady = isPositionReady;
+    }
+
+    public MediatorLiveData<Boolean> getIsLoadingDone() {
+        return isLoadingDone;
+    }
+
+    public void setIsLoadingDone(MediatorLiveData<Boolean> isLoadingDone) {
+        this.isLoadingDone = isLoadingDone;
     }
 }

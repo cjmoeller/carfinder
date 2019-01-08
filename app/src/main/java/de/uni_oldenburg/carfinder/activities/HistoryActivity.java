@@ -57,6 +57,11 @@ public class HistoryActivity extends AppCompatActivity implements HistoryFragmen
 
     }
 
+    /**
+     * Called when the database has finished loading.
+     * @param data
+     * @return
+     */
     private Void onDataLoaded(List<ParkingSpot> data) {
         HistoryFragment history = new HistoryFragment();
         Bundle args = new Bundle();

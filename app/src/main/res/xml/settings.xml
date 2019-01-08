@@ -17,10 +17,14 @@
             android:key="pref_key_sms_delete_limit"
             android:summary="@string/settings_desc_notify"
             android:title="@string/settings_tl_notify" />
-        <Preference
-            android:key="pref_key_mms_delete_limit"
-            android:summary="Erkennung vom Parken durch Bluetooth-Überwachung"
-            android:title="Bluetooth"  />
+        <CheckBoxPreference
+        android:key="pref_key_mms_delete_limit"
+        android:summary="Erkennung vom Parken durch Bluetooth-Überwachung"
+        android:title="Bluetooth"  />
+        <CheckBoxPreference
+            android:key="pref_key_surr_spots"
+            android:summary="Show surrounding parking spots on the map."
+            android:title="Show parking spots"  />
         <MultiSelectListPreference
             android:key="pref_key_bluetooth_device"
             android:summary="@string/settings_desc_bldevice"
