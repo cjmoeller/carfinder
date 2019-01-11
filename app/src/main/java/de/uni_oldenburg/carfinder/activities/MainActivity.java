@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.viewModel.getParkingSpot().setAddress(addressString);
             this.viewModel.getParkingSpot().setLatitude(address.getLatitude());
             this.viewModel.getParkingSpot().setLongitude(address.getLongitude());
+            this.viewModel.getUpdatingPosition().postValue(false);
 
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         }
@@ -474,10 +475,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //Zoom to own Location
                 LatLng ownPosition = new LatLng(this.viewModel.getCurrentPositionLat().getValue(), this.viewModel.getCurrentPositionLon().getValue());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ownPosition, Constants.DEFAULT_ZOOM));
+
             }
         };
-
+        final Observer<Boolean> positionUpdateSettingObserver = update -> {
+            if (this.viewModel.getIsLoadingDone().getValue() && update) {
+                displayLocation();
+            } else if (this.fusedLocationClient != null) {
+                fusedLocationClient.removeLocationUpdates(locationCallback);
+            }
+        };
+        this.viewModel.getUpdatingPosition().observe(this, positionUpdateSettingObserver);
         this.viewModel.getIsLoadingDone().observe(this, loadingStateObserver);
+
 
     }
 

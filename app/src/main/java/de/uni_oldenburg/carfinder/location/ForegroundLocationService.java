@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Environment;
 import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,6 +19,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +56,8 @@ public class ForegroundLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        FileLogger.init(storageDir.getAbsolutePath());
         FileLogger.getInstance().log(new Date().toString() + ": Starting ForegroundLocationService in Mode: " + this.mode);
         this.locationList = new ArrayList<>();
         this.mode = intent.getIntExtra(Constants.EXTRA_LOCATION_MODE, Constants.LOCATION_MODE_NORMAL);

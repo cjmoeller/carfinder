@@ -5,6 +5,7 @@ import com.google.android.gms.maps.model.Marker;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -16,12 +17,7 @@ public class MainViewModel extends ViewModel {
     private ParkingSpot parkingSpot;
     private boolean parkingSpotSaved;
 
-    public List<Marker> getPublicParkingSpots() {
-        return publicParkingSpots;
-    }
-
     private List<Marker> publicParkingSpots;
-
 
     private MutableLiveData<String> currentPositionAddress;
     private MutableLiveData<Double> currentPositionLat;
@@ -31,6 +27,8 @@ public class MainViewModel extends ViewModel {
     private MutableLiveData<Boolean> isMapLoaded;
     private MutableLiveData<Boolean> isDatabaseLoaded;
     private MutableLiveData<Boolean> isPositionReady;
+    private MutableLiveData<Boolean> updatingPosition;
+
     //merges all into one ready state:
     private MediatorLiveData<Boolean> isLoadingDone;
 
@@ -38,6 +36,7 @@ public class MainViewModel extends ViewModel {
         parkingSpot = new ParkingSpot(0, "empty", "empty", null, false, -1, 0, 0, "empty");
         checkedDatabase = false;
         parkingSpotSaved = false;
+        updatingPosition = new MutableLiveData<>();
         currentPositionAddress = new MutableLiveData<>();
         currentPositionLat = new MutableLiveData<>();
         currentPositionLon = new MutableLiveData<>();
@@ -96,31 +95,25 @@ public class MainViewModel extends ViewModel {
         return isMapLoaded;
     }
 
-    public void setIsMapLoaded(MutableLiveData<Boolean> isMapLoaded) {
-        this.isMapLoaded = isMapLoaded;
-    }
 
     public MutableLiveData<Boolean> getIsDatabaseLoaded() {
         return isDatabaseLoaded;
     }
 
-    public void setIsDatabaseLoaded(MutableLiveData<Boolean> isDatabaseLoaded) {
-        this.isDatabaseLoaded = isDatabaseLoaded;
-    }
 
     public MutableLiveData<Boolean> getIsPositionReady() {
         return isPositionReady;
-    }
-
-    public void setIsPositionReady(MutableLiveData<Boolean> isPositionReady) {
-        this.isPositionReady = isPositionReady;
     }
 
     public MediatorLiveData<Boolean> getIsLoadingDone() {
         return isLoadingDone;
     }
 
-    public void setIsLoadingDone(MediatorLiveData<Boolean> isLoadingDone) {
-        this.isLoadingDone = isLoadingDone;
+    public MutableLiveData<Boolean> getUpdatingPosition() {
+        return updatingPosition;
+    }
+
+    public List<Marker> getPublicParkingSpots() {
+        return publicParkingSpots;
     }
 }
