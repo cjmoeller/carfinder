@@ -22,6 +22,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import de.uni_oldenburg.carfinder.util.AlarmReceiver;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.util.OpenRouteServiceApi;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
@@ -33,6 +34,7 @@ public class TimePickerLocationService extends Service {
     private float distance;
     private long time;
     private long alarmtime;
+    private OpenRouteServiceApi apiService;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) { return null; }
@@ -45,6 +47,8 @@ public class TimePickerLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startID){
+        apiService = new OpenRouteServiceApi();
+        apiService.setDestAdresse((double)intent.getExtras().get("lat"), (double)intent.getExtras().get("lon"));
         fusedLocationClient = getFusedLocationProviderClient(this);
         LocationRequest request = new LocationRequest();
         request.setInterval(1000 * 60 * 5); // 5min interval
@@ -64,13 +68,10 @@ public class TimePickerLocationService extends Service {
                 if (locationResult == null) {
                     return;
                 }else{
-                //Reset or change alarm
-                    start = locationResult.getLastLocation();
-                    dest = new Location("");
-                    dest.setLatitude((double)intent.getExtras().get("lat"));
-                    dest.setLongitude((double)intent.getExtras().get("lon"));
-                    distance = start.distanceTo(dest);
-                    time = (long)distance / Constants.WALKINGSPEED_PER_MINUTE;
+                
+                    apiService.createNewAdresse(start.getLatitude(), start.getLongitude());
+                    apiService.executeReqeustCall();
+                    time = (long)apiService.getDuration() * 1000;
 
                     AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
                     alarmtime = alarmManager.getNextAlarmClock().getTriggerTime(); //get "old" Alarm
@@ -79,8 +80,12 @@ public class TimePickerLocationService extends Service {
                     setAlarm(alarmManager, alarmtime);//set new alarm
 
                 }
+
+
+
             }
         };
+
 
         try {
             fusedLocationClient.requestLocationUpdates(request, locationCallback, null);

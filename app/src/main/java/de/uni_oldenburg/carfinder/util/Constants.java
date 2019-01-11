@@ -27,5 +27,6 @@ public class Constants {
     public static final int LOCATION_MODE_ENHANCED = 1;
     public static final int LOCATION_MODE_PERSIST_DIRECTLY = 2;
     public static final int WALKINGSPEED_PER_MINUTE = 60;
-
+    public static final String OPEN_ROUTE_SERVICE_ADRESSE = "https://api.openrouteservice.org/directions?api_key=5b3ce3597851110001cf62488bed2386bc4d46688cf421909215b916";
+    public static final String OPEN_ROUTE_SERVICE_MOVEMENT = "foot_walking";
 }
