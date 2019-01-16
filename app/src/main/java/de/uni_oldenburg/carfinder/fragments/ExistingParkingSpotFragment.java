@@ -52,7 +52,6 @@ public class ExistingParkingSpotFragment extends Fragment {
     public void onStart() {
         super.onStart();
         initializeUI();
-
     }
 
 

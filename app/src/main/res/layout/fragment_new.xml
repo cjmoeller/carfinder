@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
 
         <LinearLayout
@@ -19,6 +18,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="8dp"
+            android:paddingRight="120dp"
             android:gravity="clip_horizontal"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -26,25 +26,29 @@
             app:layout_constraintTop_toTopOf="parent">
 
 
+            <TextView
+                android:id="@+id/newAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:text="address"
+                android:textColor="#000"
+                android:textSize="25dp" />
 
-        <TextView
-                    android:id="@+id/newAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="address"
-                    android:textColor="#000"
-                    android:textSize="25dp" />
-
-                <TextView
-                    android:id="@+id/newLatLon"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="coordinates" />
+            <TextView
+                android:id="@+id/newLatLon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="coordinates" />
 
 
-            </LinearLayout>
+        </LinearLayout>
 
 
         <Button

@@ -80,6 +80,7 @@ public class NewParkingSpotFragment extends Fragment {
 
     private void initializeUI() {
         newAddress = getActivity().findViewById(R.id.newAddress);
+
         newLatLong = getActivity().findViewById(R.id.newLatLon);
         notes = getActivity().findViewById(R.id.textViewNoteNew);
 
@@ -156,7 +157,6 @@ public class NewParkingSpotFragment extends Fragment {
         this.viewModel.getCurrentPositionLon().observe(this, positionLonObserver);
 
         //
-
     }
 
 

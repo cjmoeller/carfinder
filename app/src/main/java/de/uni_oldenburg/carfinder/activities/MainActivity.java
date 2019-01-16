@@ -16,7 +16,6 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -75,7 +74,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+//TODO: App dies on screen rotation
+//TODO: Picture not loaded in historyView
+//TODO: Add a note doesnt look very nice
+//TODO: Delete Button in DetailsView doesnt work
+//TODO: Preferences need to be updated on runtime
+//TODO: onPause onResume in MainActivity
+//TODO: Update main activity when user deletes current parking spot in history view.
 
+//TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 

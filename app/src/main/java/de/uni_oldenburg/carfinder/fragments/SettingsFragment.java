@@ -24,37 +24,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings);
-        Preference syncPreference = findPreference("pref_key_sync");
-        syncPreference.setOnPreferenceClickListener(preference -> {
-            // Choose authentication
-            List<AuthUI.IdpConfig> providers = Arrays.asList(new AuthUI.IdpConfig.GoogleBuilder().build());
-
-            startActivityForResult(
-                    AuthUI.getInstance()
-                            .createSignInIntentBuilder()
-                            .setAvailableProviders(providers)
-                            .build(),
-                    Constants.RC_SIGN_IN);
-            return true;
-        });
 
         //Parking Meter Settings
         //set click listener
         CheckBoxPreference parkingMeterCheckbox = (CheckBoxPreference) findPreference("pref_key_parking_meter");
         parkingMeterCheckbox.setDefaultValue(true);
         parkingMeterCheckbox.setChecked(true);
-        parkingMeterCheckbox.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                                                              @Override
-                                                              public boolean onPreferenceClick(Preference preference) {
-                                                                  Preference pref = findPreference("pref_key_set_parking_meter");
-                                                                  if(pref.isEnabled()) {
-                                                                      pref.setEnabled(false);
-                                                                  } else {
-                                                                      pref.setEnabled(true);
-                                                                  }
-                                                                  return true;
-                                                              }
-                                                          }
+        parkingMeterCheckbox.setOnPreferenceClickListener(preference -> {
+            Preference pref = findPreference("pref_key_set_parking_meter");
+            if(pref.isEnabled()) {
+                pref.setEnabled(false);
+            } else {
+                pref.setEnabled(true);
+            }
+            return true;
+        }
 
         );
 
