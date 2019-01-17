@@ -4,12 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
 import com.google.android.gms.location.ActivityTransitionResult;
 
+import java.io.File;
 import java.util.Date;
 
 import androidx.core.content.ContextCompat;
@@ -23,7 +25,8 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         boolean enhancedMode = prefs.getBoolean("pref_key_enhanced_recognition", false);
-
+        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        FileLogger.init(storageDir.getAbsolutePath());
         if (ActivityTransitionResult.hasResult(intent)) {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
             boolean entering = false;

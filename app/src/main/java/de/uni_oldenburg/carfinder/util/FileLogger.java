@@ -25,7 +25,7 @@ public class FileLogger {
     }
 
     public void log(String text) {
-        File logFile = new File(path);
+       File logFile = new File(path);
         if (!logFile.exists()) {
             try {
                 logFile.createNewFile();
