@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -51,7 +52,7 @@ public class HistoryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_history_list, container, false);
         ArrayList<ParkingSpot> data = (ArrayList<ParkingSpot>) this.getArguments().getSerializable(Constants.ARGUMENT_SPOT_LIST);
-
+        Collections.reverse(data); //order by id desc
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();

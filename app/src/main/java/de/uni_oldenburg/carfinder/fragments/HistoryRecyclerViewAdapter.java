@@ -78,6 +78,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
             historyAddress = view.findViewById(R.id.history_address);
             historyDate = view.findViewById(R.id.historyDate);
             historyTitle = view.findViewById(R.id.history_title);
+
         }
 
         @Override

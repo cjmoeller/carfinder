@@ -38,7 +38,9 @@
         </androidx.cardview.widget.CardView>
 
 
+
         <androidx.cardview.widget.CardView
+            android:id="@+id/imageDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
@@ -108,24 +110,12 @@
                     android:textStyle="italic" />
 
 
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            app:cardCornerRadius="1dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:orientation="vertical"
-                android:padding="5dp">
-
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginVertical="20dp"
+                    android:layout_marginHorizontal="5dp"
+                    android:background="#eeeeee" />
 
                 <TextView
                     android:id="@+id/detailsParkingMeter"

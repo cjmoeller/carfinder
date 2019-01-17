@@ -74,14 +74,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO: App dies on screen rotation
-//TODO: Picture not loaded in historyView
-//TODO: History listview order by time asc
 //TODO: Refactoring of parking meter stuff
+//TODO: Manual set of Parking spot position
 //TODO: Delete Button in DetailsView doesnt work
 //TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
-//TODO: IF parking spot existing zoom to spot, show spot as marker
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -152,6 +149,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (viewModel.alreadyCheckedDatabase()) {
             this.loadExistingParkingSpotFragment();
+            displayLocation();
+            this.viewModel.getIsDatabaseLoaded().postValue(true);
         } else {
             ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
 
@@ -321,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (currentSpot != null) {
             viewModel.setParkingSpot(currentSpot);
             viewModel.setParkingSpotSaved(true);
-            viewModel.getCurrentPositionLat().setValue(currentSpot.getLatitude());
+            viewModel.getCurrentPositionLat().setValue(currentSpot.getLatitude()); //Why?
             viewModel.getCurrentPositionLon().setValue(currentSpot.getLongitude());
             loadExistingParkingSpotFragment();
             displayLocation();
@@ -434,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Void onAddressResultReceived(String address, Location location) {
         //replaces the loader with the new parkin Spot fragment.
 
-         if (this.progressBar.getVisibility() == View.VISIBLE) {
+        if (this.progressBar.getVisibility() == View.VISIBLE) {
             //First time the position was received
             this.progressBar.setVisibility(View.INVISIBLE);
             this.loadNewParkingSpotFragment();
@@ -456,9 +455,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     private void initializeObservers() {
 
-        this.viewModel.getIsMapLoaded().postValue(false);
-        this.viewModel.getIsDatabaseLoaded().postValue(false);
-        this.viewModel.getIsPositionReady().postValue(false);
+        this.viewModel.getIsMapLoaded().setValue(false);
+        this.viewModel.getIsDatabaseLoaded().setValue(false);
+        this.viewModel.getIsPositionReady().setValue(false);
 
         final Observer<Boolean> loadingStateObserver = loaded -> {
             if (loaded) {
@@ -478,8 +477,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 //Zoom to own Location TODO: Only in no parking spot state
-                LatLng ownPosition = new LatLng(this.viewModel.getCurrentPositionLat().getValue(), this.viewModel.getCurrentPositionLon().getValue());
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ownPosition, Constants.DEFAULT_ZOOM));
+                if (!this.viewModel.isParkingSpotSaved()) {
+                    LatLng ownPosition = new LatLng(this.viewModel.getCurrentPositionLat().getValue(), this.viewModel.getCurrentPositionLon().getValue());
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ownPosition, Constants.DEFAULT_ZOOM));
+                }
 
             }
         };

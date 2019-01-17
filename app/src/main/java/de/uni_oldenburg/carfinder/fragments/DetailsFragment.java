@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
@@ -25,6 +26,7 @@ public class DetailsFragment extends Fragment {
     private View rootView;
     private ParkingSpot data;
     private TextView parkingMeter;
+    private CardView imageDetails;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class DetailsFragment extends Fragment {
     }
 
     public void displayData() {
+
         Date currentDate = new Date(data.getTimestamp());
         String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
 
@@ -67,11 +70,18 @@ public class DetailsFragment extends Fragment {
         }
 
         this.addedTime.setText(getString(R.string.added_on) + dateString);
-        this.notes.setText(data.getDescription());
+        if (!data.getDescription().equals(getString(R.string.add_note)))
+            this.notes.setText(data.getDescription());
+        else
+            this.notes.setText("-");
 
         this.picture.post(() -> {
             if (data.getImageLocation() != null) //TODO: check if image exists
                 PhotoUtils.loadFileIntoImageView(DetailsFragment.this.picture, data.getImageLocation());
+            else {
+
+                imageDetails.setVisibility(View.GONE);
+            }
         });
 
 
@@ -83,6 +93,7 @@ public class DetailsFragment extends Fragment {
         this.picture = rootView.findViewById(R.id.detailsPicture);
         this.notes = rootView.findViewById(R.id.detailsNote);
         this.parkingMeter = rootView.findViewById(R.id.detailsParkingMeter);
+        this.imageDetails = rootView.findViewById(R.id.imageDetails);
 
     }
 
