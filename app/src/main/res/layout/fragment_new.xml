@@ -42,6 +42,12 @@
 
             <TextView
                 android:id="@+id/newLatLon"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

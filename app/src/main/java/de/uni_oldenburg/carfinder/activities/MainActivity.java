@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Void onAddressResultReceived(String address, Location location) {
         //replaces the loader with the new parkin Spot fragment.
 
-        if (this.progressBar.getVisibility() == View.VISIBLE) {
+        if (this.progressBar.getVisibility() == View.VISIBLE && ! this.viewModel.isParkingSpotSaved()) {
             //First time the position was received
             this.progressBar.setVisibility(View.INVISIBLE);
             this.loadNewParkingSpotFragment();
