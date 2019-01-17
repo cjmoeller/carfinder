@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -75,7 +76,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 //TODO: Refactoring of parking meter stuff
-//TODO: Manual set of Parking spot position
 //TODO: Delete Button in DetailsView doesnt work
 //TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //TODO: make this nicer
     private boolean initializedOwnPosition = false;
+    private boolean userSetMode = false;
 
 
     @Override
@@ -231,6 +232,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
+        mMap.setOnMapLongClickListener(latLng -> {
+            if (!this.viewModel.isParkingSpotSaved()) {
+                this.userSetMode = true;
+                this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
+                if (this.currentMarker != null)
+                    this.currentMarker.remove();
+                this.currentMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+                Location selectedLocation = new Location(LocationManager.GPS_PROVIDER);
+                selectedLocation.setLatitude(latLng.latitude);
+                selectedLocation.setLongitude(latLng.longitude);
+                this.loadAddressFromLocation(selectedLocation);
+
+            }
+
+        });
+
+        mMap.setOnMyLocationButtonClickListener(() -> {
+            if(userSetMode) {
+                if (this.currentMarker != null)
+                    this.currentMarker.remove();
+                LocationRequest request = new LocationRequest();
+                request.setInterval(5000); // 5s interval
+                request.setFastestInterval(5000);
+
+                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                this.fusedLocationClient.requestLocationUpdates(request, this.locationCallback, null);
+                userSetMode = false;
+            }
+            return true;
+        });
 
         this.viewModel.getIsMapLoaded().postValue(true);
     }
@@ -433,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Void onAddressResultReceived(String address, Location location) {
         //replaces the loader with the new parkin Spot fragment.
 
-        if (this.progressBar.getVisibility() == View.VISIBLE && ! this.viewModel.isParkingSpotSaved()) {
+        if (this.progressBar.getVisibility() == View.VISIBLE && !this.viewModel.isParkingSpotSaved()) {
             //First time the position was received
             this.progressBar.setVisibility(View.INVISIBLE);
             this.loadNewParkingSpotFragment();
