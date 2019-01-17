@@ -19,7 +19,7 @@
             android:title="Show parking spots"
             app:iconSpaceReserved="false" />
         <CheckBoxPreference
-            android:key="pref_key_mms_delete_limit"
+            android:key="pref_key_bluetooth"
             android:summary="Erkennung vom Parken durch Bluetooth-Überwachung"
             android:title="Bluetooth"
             app:iconSpaceReserved="false" />

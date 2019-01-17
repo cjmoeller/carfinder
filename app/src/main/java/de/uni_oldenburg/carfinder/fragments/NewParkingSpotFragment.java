@@ -49,8 +49,6 @@ public class NewParkingSpotFragment extends Fragment {
     private TextView notes;
     private TextView clockTextView;
     private Button startParkingButton;
-    private CardView photoCard;
-    private CardView notesCard;
     private CardView clockCard;
     private ImageView pictureImageView;
     private ImageView notesImageView;
@@ -107,7 +105,7 @@ public class NewParkingSpotFragment extends Fragment {
             }
 
             long millisAlarm = viewModel.getParkingSpot().getExpiresAt();
-            if(millisAlarm != -1){
+            if (millisAlarm != -1) {
                 Calendar alarm = Calendar.getInstance();
                 alarm.setTimeInMillis(millisAlarm);
                 setAlarm(alarm);
@@ -130,27 +128,25 @@ public class NewParkingSpotFragment extends Fragment {
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout);
         parkingSpotName = getActivity().findViewById(R.id.createParkingSpotName);
 
-        photoCard = getActivity().findViewById(R.id.createPicture);
-        notesCard = getActivity().findViewById(R.id.createNote);
         clockCard = getActivity().findViewById(R.id.createClock);
 
-        photoCard.setClickable(true);
-        photoCard.setOnClickListener(v -> startCameraForPicture());
+        pictureImageView.setClickable(true);
+        pictureImageView.setOnClickListener(v -> startCameraForPicture());
 
-        notesCard.setClickable(true);
-        notesCard.setOnClickListener(v -> addNote());
+        notesImageView.setClickable(true);
+        notesImageView.setOnClickListener(v -> addNote());
 
         clockCard.setClickable(true);
         clockCard.setOnClickListener(v -> addClock());
 
         newAddress.setText(this.viewModel.getParkingSpot().getAddress());
-        newLatLong.setText(this.viewModel.getParkingSpot().getLatitude() + ", " + this.viewModel.getParkingSpot().getLongitude());
+        newLatLong.setText(this.viewModel.getCurrentPositionLat().getValue() + ", " + this.viewModel.getCurrentPositionLon().getValue());
 
 
         //Live Data Observers
         final Observer<String> addressObserver = address -> this.newAddress.setText(address);
-        final Observer<Double> positionLatObserver = newLat -> newLatLong.setText(newLat + ", " + this.viewModel.getParkingSpot().getLongitude());
-        final Observer<Double> positionLonObserver = newLon -> newLatLong.setText(this.viewModel.getParkingSpot().getLatitude() + ", " + newLon);
+        final Observer<Double> positionLatObserver = newLat -> newLatLong.setText(newLat + ", " + this.viewModel.getCurrentPositionLon().getValue());
+        final Observer<Double> positionLonObserver = newLon -> newLatLong.setText(this.viewModel.getCurrentPositionLat().getValue() + ", " + newLon);
 
         this.viewModel.getCurrentPositionAddress().observe(this, addressObserver);
         this.viewModel.getCurrentPositionLat().observe(this, positionLatObserver);
@@ -212,7 +208,7 @@ public class NewParkingSpotFragment extends Fragment {
             }
             //Add Notes Text
             NewParkingSpotFragment.this.viewModel.getParkingSpot().setDescription(input.getText().toString());
-            NewParkingSpotFragment.this.notes.setText(input.getText().toString());
+            NewParkingSpotFragment.this.notes.setText("\"" + input.getText().toString() + "\"");
         });
 
 
@@ -229,9 +225,9 @@ public class NewParkingSpotFragment extends Fragment {
         SharedPreferences pref_minutes = PreferenceManager.getDefaultSharedPreferences(this.getContext());
         String minutes_string = pref_minutes.getString("pref_key_set_parking_meter", "");
         int minutes_value;
-        if(minutes_string != "Auto" || minutes_string != null){
+        if (minutes_string != "Auto" || minutes_string != null) {
             minutes_value = Integer.parseInt(minutes_string);
-        }else{
+        } else {
             minutes_value = 0;
         }
         //Set up TimePickerDialog
@@ -263,8 +259,6 @@ public class NewParkingSpotFragment extends Fragment {
         this.viewModel.getParkingSpot().setExpiresAt(targetCal.getTimeInMillis());
         Toast.makeText(this.getContext(), "Alarm wurde erstellt!", Toast.LENGTH_LONG).show();
     }
-
-
 
 
 }

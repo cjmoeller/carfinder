@@ -24,10 +24,11 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean normalMode = prefs.getBoolean("pref_key_auto_recognition", false);
         boolean enhancedMode = prefs.getBoolean("pref_key_enhanced_recognition", false);
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         FileLogger.init(storageDir.getAbsolutePath());
-        if (ActivityTransitionResult.hasResult(intent)) {
+        if (normalMode && ActivityTransitionResult.hasResult(intent)) {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
             boolean entering = false;
             for (ActivityTransitionEvent event : result.getTransitionEvents()) {

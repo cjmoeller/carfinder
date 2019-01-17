@@ -25,20 +25,35 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings);
 
+        CheckBoxPreference autoMode = (CheckBoxPreference) findPreference("pref_key_auto_recognition");
+        CheckBoxPreference enhancedAutoMode = (CheckBoxPreference) findPreference("pref_key_enhanced_recognition");
+        if(!autoMode.isChecked()){
+            enhancedAutoMode.setEnabled(false);
+        }
+        autoMode.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue.equals(Boolean.FALSE)) {
+                enhancedAutoMode.setEnabled(false);
+                return true;
+            } else {
+                enhancedAutoMode.setEnabled(true);
+                return true;
+            }
+
+        });
         //Parking Meter Settings
         //set click listener
         CheckBoxPreference parkingMeterCheckbox = (CheckBoxPreference) findPreference("pref_key_parking_meter");
         parkingMeterCheckbox.setDefaultValue(true);
         parkingMeterCheckbox.setChecked(true);
         parkingMeterCheckbox.setOnPreferenceClickListener(preference -> {
-            Preference pref = findPreference("pref_key_set_parking_meter");
-            if(pref.isEnabled()) {
-                pref.setEnabled(false);
-            } else {
-                pref.setEnabled(true);
-            }
-            return true;
-        }
+                    Preference pref = findPreference("pref_key_set_parking_meter");
+                    if (pref.isEnabled()) {
+                        pref.setEnabled(false);
+                    } else {
+                        pref.setEnabled(true);
+                    }
+                    return true;
+                }
 
         );
 

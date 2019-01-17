@@ -76,11 +76,12 @@ import retrofit2.Response;
 
 //TODO: App dies on screen rotation
 //TODO: Picture not loaded in historyView
-//TODO: Add a note doesnt look very nice
+//TODO: History listview order by time asc
+//TODO: Refactoring of parking meter stuff
 //TODO: Delete Button in DetailsView doesnt work
-//TODO: Preferences need to be updated on runtime
 //TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
+//TODO: IF parking spot existing zoom to spot, show spot as marker
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -283,6 +284,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Check if parking spot places prefs has changed:
+        if (this.viewModel.getIsLoadingDone().getValue() != null && this.viewModel.getIsLoadingDone().getValue()) {
+            SharedPreferences sharedPreferences =
+                    androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+            Boolean showSpots = sharedPreferences.getBoolean("pref_key_surr_spots", false);
+
+            for (Marker m : this.viewModel.getPublicParkingSpots()) {
+                m.remove();
+            }
+            if (showSpots) {
+                displaySurroundingSpots();
+            }
+        }
+
+    }
 
     /**
      * Called when the database was queried for parking spot data.
@@ -305,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             viewModel.getCurrentPositionLat().setValue(currentSpot.getLatitude());
             viewModel.getCurrentPositionLon().setValue(currentSpot.getLongitude());
             loadExistingParkingSpotFragment();
+            displayLocation();
         } else {
             viewModel.setParkingSpotSaved(false);
             displayLocation();
@@ -414,11 +434,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Void onAddressResultReceived(String address, Location location) {
         //replaces the loader with the new parkin Spot fragment.
 
-        this.viewModel.getParkingSpot().setAddress(address);
-        this.viewModel.getParkingSpot().setLatitude(location.getLatitude());
-        this.viewModel.getParkingSpot().setLongitude(location.getLongitude());
-
-        if (this.progressBar.getVisibility() == View.VISIBLE) {
+         if (this.progressBar.getVisibility() == View.VISIBLE) {
             //First time the position was received
             this.progressBar.setVisibility(View.INVISIBLE);
             this.loadNewParkingSpotFragment();
@@ -428,7 +444,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         this.viewModel.getCurrentPositionLat().postValue(location.getLatitude());
         this.viewModel.getCurrentPositionLon().postValue(location.getLongitude());
         this.viewModel.getCurrentPositionAddress().postValue(address);
-        this.viewModel.getIsPositionReady().postValue(true);
+        if (!this.viewModel.getIsPositionReady().getValue())
+            this.viewModel.getIsPositionReady().postValue(true);
 
 
         return null;
@@ -448,7 +465,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //When everything is loaded: display the current parking spot, if available
                 if (viewModel.getCurrentPositionLon().getValue() != null) {
                     if (this.viewModel.isParkingSpotSaved())
-                        displayMarkerOnMap(MainActivity.this.viewModel.getCurrentPositionLat().getValue(), MainActivity.this.viewModel.getCurrentPositionLon().getValue(), this.viewModel.getParkingSpot().getName());
+                        displayMarkerOnMap(MainActivity.this.viewModel.getParkingSpot().getLatitude(), MainActivity.this.viewModel.getParkingSpot().getLongitude(), this.viewModel.getParkingSpot().getName());
                 }
 
                 //Load surrounding parking spots into the map.
@@ -457,29 +474,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Boolean showSpots = sharedPreferences.getBoolean("pref_key_surr_spots", false);
 
                 if (showSpots) {
-                    GooglePlaces.getInstance().getNearbyParkingPlaces(MainActivity.this.viewModel.getCurrentPositionLat().getValue(), MainActivity.this.viewModel.getCurrentPositionLon().getValue(), new Callback<PlacesResult>() {
-                        @Override
-                        public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
-                            for (Marker m : MainActivity.this.viewModel.getPublicParkingSpots())
-                                m.remove();
-                            for (Result r : response.body().getResults()) {
-                                Log.i(Constants.LOG_TAG, r.getName() + ": " + r.getGeometry().getLocation().getLat() + ", " + r.getGeometry().getLocation().getLng());
-
-                                LatLng pos = new LatLng(r.getGeometry().getLocation().getLat(), r.getGeometry().getLocation().getLng());
-
-                                MainActivity.this.viewModel.getPublicParkingSpots().add(MainActivity.this.mMap.addMarker(new MarkerOptions().position(pos)
-                                        .title(r.getName()).icon(BitmapDescriptorFactory.fromBitmap(MainActivity.this.publicParkingIcon))));
-                            }
-                        }
-
-                        @Override
-                        public void onFailure(Call<PlacesResult> call, Throwable t) {
-                            Log.e(Constants.LOG_TAG, "Failed to query Places API:" + t.getLocalizedMessage());
-                        }
-                    });
+                    displaySurroundingSpots();
                 }
 
-                //Zoom to own Location
+                //Zoom to own Location TODO: Only in no parking spot state
                 LatLng ownPosition = new LatLng(this.viewModel.getCurrentPositionLat().getValue(), this.viewModel.getCurrentPositionLon().getValue());
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ownPosition, Constants.DEFAULT_ZOOM));
 
@@ -508,6 +506,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
+    }
+
+    private void displaySurroundingSpots() {
+        GooglePlaces.getInstance().getNearbyParkingPlaces(MainActivity.this.viewModel.getCurrentPositionLat().getValue(), MainActivity.this.viewModel.getCurrentPositionLon().getValue(), new Callback<PlacesResult>() {
+            @Override
+            public void onResponse(Call<PlacesResult> call, Response<PlacesResult> response) {
+                for (Marker m : MainActivity.this.viewModel.getPublicParkingSpots())
+                    m.remove();
+                for (Result r : response.body().getResults()) {
+                    Log.i(Constants.LOG_TAG, r.getName() + ": " + r.getGeometry().getLocation().getLat() + ", " + r.getGeometry().getLocation().getLng());
+
+                    LatLng pos = new LatLng(r.getGeometry().getLocation().getLat(), r.getGeometry().getLocation().getLng());
+
+                    MainActivity.this.viewModel.getPublicParkingSpots().add(MainActivity.this.mMap.addMarker(new MarkerOptions().position(pos)
+                            .title(r.getName()).icon(BitmapDescriptorFactory.fromBitmap(MainActivity.this.publicParkingIcon))));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PlacesResult> call, Throwable t) {
+                Log.e(Constants.LOG_TAG, "Failed to query Places API:" + t.getLocalizedMessage());
+            }
+        });
     }
 
 }
