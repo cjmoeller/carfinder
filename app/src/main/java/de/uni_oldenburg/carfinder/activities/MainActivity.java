@@ -79,6 +79,9 @@ import retrofit2.Response;
 //TODO: Delete Button in DetailsView doesnt work
 //TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
+//TODO: Animations
+//TODO: Dialog, when parking meter expired
+//TODO: Fix notification bug
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {

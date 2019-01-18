@@ -28,6 +28,7 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
         boolean enhancedMode = prefs.getBoolean("pref_key_enhanced_recognition", false);
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         FileLogger.init(storageDir.getAbsolutePath());
+        FileLogger.getInstance().log("Config: normal:" + normalMode + "; extended:" + enhancedMode);
         if (normalMode && ActivityTransitionResult.hasResult(intent)) {
             ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
             boolean entering = false;
