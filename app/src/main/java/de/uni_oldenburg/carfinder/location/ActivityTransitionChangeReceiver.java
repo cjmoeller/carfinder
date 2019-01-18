@@ -45,10 +45,10 @@ public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
                 startService.putExtra(Constants.EXTRA_LOCATION_MODE, Constants.LOCATION_MODE_ENHANCED);
                 ContextCompat.startForegroundService(context, startService);
             } else {
-                if (enhancedMode) {
+                if (!entering && enhancedMode) {
                     Intent stopService = new Intent(context, ForegroundLocationService.class);
                     context.stopService(stopService);
-                } else {
+                } else if (!entering) {
                     Intent startService = new Intent(context, ForegroundLocationService.class);
                     ContextCompat.startForegroundService(context, startService);
 

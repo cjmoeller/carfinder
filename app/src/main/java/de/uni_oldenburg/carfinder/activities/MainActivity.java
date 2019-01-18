@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -54,6 +55,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.PermissionChecker;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -83,6 +85,7 @@ import retrofit2.Response;
 //TODO: Dialog, when parking meter expired
 //TODO: Fix notification bug
 //TODO: Permissions Bug
+//TODO: Parking time under name field not set
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -133,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
             String addressString = TextUtils.join(System.getProperty("line.separator"),
                     addressFragments);
+
             this.viewModel.getParkingSpot().setAddress(addressString);
             this.viewModel.getParkingSpot().setLatitude(address.getLatitude());
             this.viewModel.getParkingSpot().setLongitude(address.getLongitude());
@@ -230,44 +234,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMyLocationEnabled(true);
-        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        if (PermissionChecker.checkSelfPermission(this, "android.permission.ACCESS_FINE_LOCATION") == PermissionChecker.PERMISSION_GRANTED) {
+            mMap.setMyLocationEnabled(true);
+            mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-        mMap.setOnMapLongClickListener(latLng -> {
-            if (!this.viewModel.isParkingSpotSaved()) {
-                this.userSetMode = true;
-                this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
-                if (this.currentMarker != null)
-                    this.currentMarker.remove();
-                this.currentMarker = mMap.addMarker(new MarkerOptions().position(latLng));
-                Location selectedLocation = new Location(LocationManager.GPS_PROVIDER);
-                selectedLocation.setLatitude(latLng.latitude);
-                selectedLocation.setLongitude(latLng.longitude);
-                this.loadAddressFromLocation(selectedLocation);
+            mMap.setOnMapLongClickListener(latLng -> {
+                if (!this.viewModel.isParkingSpotSaved()) {
+                    this.userSetMode = true;
+                    this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
+                    if (this.currentMarker != null)
+                        this.currentMarker.remove();
+                    this.currentMarker = mMap.addMarker(new MarkerOptions().position(latLng));
+                    Location selectedLocation = new Location(LocationManager.GPS_PROVIDER);
+                    selectedLocation.setLatitude(latLng.latitude);
+                    selectedLocation.setLongitude(latLng.longitude);
+                    this.loadAddressFromLocation(selectedLocation);
 
-            }
+                }
 
-        });
+            });
 
-        mMap.setOnMyLocationButtonClickListener(() -> {
-            if(userSetMode) {
-                if (this.currentMarker != null)
-                    this.currentMarker.remove();
-                LocationRequest request = new LocationRequest();
-                request.setInterval(5000); // 5s interval
-                request.setFastestInterval(5000);
+            mMap.setOnMyLocationButtonClickListener(() -> {
+                if (userSetMode) {
+                    if (this.currentMarker != null)
+                        this.currentMarker.remove();
+                    LocationRequest request = new LocationRequest();
+                    request.setInterval(5000); // 5s interval
+                    request.setFastestInterval(5000);
 
-                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                this.fusedLocationClient.requestLocationUpdates(request, this.locationCallback, null);
-                userSetMode = false;
-            }
-            return true;
-        });
+                    request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                    this.fusedLocationClient.requestLocationUpdates(request, this.locationCallback, null);
+                    userSetMode = false;
+                }
 
+                return false;
+            });
+        }
         this.viewModel.getIsMapLoaded().postValue(true);
     }
 

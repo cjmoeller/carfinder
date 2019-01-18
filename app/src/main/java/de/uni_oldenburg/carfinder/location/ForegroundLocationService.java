@@ -56,9 +56,14 @@ public class ForegroundLocationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         File storageDir = this.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         FileLogger.init(storageDir.getAbsolutePath());
         FileLogger.getInstance().log(new Date().toString() + ": Starting ForegroundLocationService in Mode: " + this.mode);
+        if(intent == null){
+            FileLogger.getInstance().log(new Date().toString() + ": Intent was null. Don't starting the service.");
+
+        }
         this.locationList = new ArrayList<>();
         this.mode = intent.getIntExtra(Constants.EXTRA_LOCATION_MODE, Constants.LOCATION_MODE_NORMAL);
 
@@ -101,7 +106,8 @@ public class ForegroundLocationService extends Service {
         } catch (SecurityException e) {
             Log.e(Constants.LOG_TAG, "Permission to update location was not given.");
         }
-        return Service.START_STICKY;
+
+        return Service.START_NOT_STICKY;
     }
 
 
