@@ -82,6 +82,7 @@ import retrofit2.Response;
 //TODO: Animations
 //TODO: Dialog, when parking meter expired
 //TODO: Fix notification bug
+//TODO: Permissions Bug
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
