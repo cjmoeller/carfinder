@@ -1,7 +1,7 @@
 package de.uni_oldenburg.carfinder.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
@@ -23,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -86,6 +86,8 @@ import retrofit2.Response;
 //TODO: Fix notification bug
 //TODO: Permissions Bug
 //TODO: Parking time under name field not set
+//TODO: Notes cannot be edited twice
+//TODO: Set marker on park, remove on delete
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -124,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         publicParkingIcon = BitmapFactory.decodeResource(this.getResources(),
                 R.drawable.parking);
         publicParkingIcon = Bitmap.createScaledBitmap(
-                publicParkingIcon, 100, 100, false); //TODO: fit to device size
+                publicParkingIcon, 100, 100, false);
 
         //MainActivity was started from "automatically detected parking spot" notification.
         if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {

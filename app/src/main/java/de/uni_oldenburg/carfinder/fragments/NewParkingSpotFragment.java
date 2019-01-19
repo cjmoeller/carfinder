@@ -96,8 +96,8 @@ public class NewParkingSpotFragment extends Fragment {
                 this.viewModel.getParkingSpot().setLatitude(this.viewModel.getCurrentPositionLat().getValue());
                 this.viewModel.getParkingSpot().setLongitude(this.viewModel.getCurrentPositionLon().getValue());
                 this.viewModel.getParkingSpot().setAddress(this.viewModel.getCurrentPositionAddress().getValue());
+                this.viewModel.setParkingSpotSaved(true);
 
-                MainViewModel vm = this.viewModel;
                 ParkingSpotDatabaseManager.insertParkingSpot(this.viewModel.getParkingSpot(), (Long id) -> {
                     this.viewModel.getParkingSpot().setId(id);
                     return null;

@@ -103,6 +103,8 @@ public class ForegroundLocationService extends Service {
 
         try {
             fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
+            FileLogger.getInstance().log(new Date().toString() + ": Subscribed to Location updates.");
+
         } catch (SecurityException e) {
             Log.e(Constants.LOG_TAG, "Permission to update location was not given.");
         }
@@ -112,6 +114,7 @@ public class ForegroundLocationService extends Service {
 
 
     private void onLocationFinished(Location location, LocationCallback cb) {
+        FileLogger.getInstance().log(new Date().toString() + ": Location finished.");
         this.locationCallback = cb;
         Log.i(Constants.LOG_TAG, "Added location to list.");
         this.locationList.add(location);
@@ -135,12 +138,16 @@ public class ForegroundLocationService extends Service {
                     1);
         } catch (IOException ioException) {
             Log.e(Constants.LOG_TAG, "IO Error", ioException);
+            FileLogger.getInstance().log(new Date().toString() + ": Error 1:"+ ioException.getLocalizedMessage());
+
         } catch (IllegalArgumentException illegalArgumentException) {
 
             Log.e(Constants.LOG_TAG, "Invalid Lat/Long" + ". " +
                     "Latitude = " + location.getLatitude() +
                     ", Longitude = " +
                     location.getLongitude(), illegalArgumentException);
+            FileLogger.getInstance().log(new Date().toString() + ": Error 2:"+ illegalArgumentException.getLocalizedMessage());
+
         }
 
         if (addresses == null || addresses.size() == 0) {
@@ -154,8 +161,14 @@ public class ForegroundLocationService extends Service {
 
     @Override
     public void onDestroy() {
+        FileLogger.getInstance().log(new Date().toString() + ": onDestroy() called.");
+
         Location loc = GeoUtils.getTransitionLocation(locationList);
+        FileLogger.getInstance().log(new Date().toString() + ": Location is: "+ loc.toString());
+
         Address address = this.getAddressFromLocation(loc);
+        FileLogger.getInstance().log(new Date().toString() + ": Adress: " + address.toString());
+
         ArrayList<String> addressFragments = new ArrayList<>();
 
         if (address != null) {
