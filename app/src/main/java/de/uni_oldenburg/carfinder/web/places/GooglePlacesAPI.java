@@ -1,4 +1,4 @@
-package de.uni_oldenburg.carfinder.places;
+package de.uni_oldenburg.carfinder.web.places;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

@@ -178,7 +178,7 @@ public class ForegroundLocationService extends Service {
 
             String addressString = TextUtils.join(System.getProperty("line.separator"),
                     addressFragments);
-            FileLogger.getInstance().log(new Date().toString() + ": Result of ForegroundLocation was: " + addressString);
+            FileLogger.getInstance().log(new Date().toString() + ": ORSResult of ForegroundLocation was: " + addressString);
             if (this.mode != Constants.LOCATION_MODE_PERSIST_DIRECTLY) {
                 Intent notifyIntent = new Intent(this, MainActivity.class);
                 notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);

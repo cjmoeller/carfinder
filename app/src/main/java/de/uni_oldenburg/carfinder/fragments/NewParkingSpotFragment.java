@@ -58,6 +58,7 @@ public class NewParkingSpotFragment extends Fragment {
 
 
     private MainViewModel viewModel;
+    private String minutesReminderPreference;
 
 
     @Override
@@ -77,13 +78,18 @@ public class NewParkingSpotFragment extends Fragment {
     }
 
     private void initializeUI() {
+
         newAddress = getActivity().findViewById(R.id.newAddress);
 
         newLatLong = getActivity().findViewById(R.id.newLatLon);
         notes = getActivity().findViewById(R.id.textViewNoteNew);
 
         startParkingButton = getActivity().findViewById(R.id.startParkingButton);
+
+
         startParkingButton.setOnClickListener(v -> {
+            SharedPreferences prefMinutes = PreferenceManager.getDefaultSharedPreferences(this.getContext());
+            minutesReminderPreference = prefMinutes.getString("pref_key_set_parking_meter", null);
             if (this.bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_EXPANDED) {
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 parkingSpotName.requestFocus();
@@ -115,11 +121,14 @@ public class NewParkingSpotFragment extends Fragment {
                 alarm.setTimeInMillis(millisAlarm);
                 setAlarm(alarm);
 
-                //create and start intent for TimePickerLocationService
-                Intent intent = new Intent(this.getContext(), TimePickerLocationService.class);
-                intent.putExtra("lat", this.viewModel.getParkingSpot().getLatitude());
-                intent.putExtra("lon", this.viewModel.getParkingSpot().getLongitude());
-                getActivity().startService(intent);
+                if (this.minutesReminderPreference != null && this.minutesReminderPreference.equals("Auto")) {
+                    //create and start intent for TimePickerLocationService
+                    Intent intent = new Intent(this.getContext(), TimePickerLocationService.class);
+                    intent.putExtra("lat", this.viewModel.getParkingSpot().getLatitude());
+                    intent.putExtra("lon", this.viewModel.getParkingSpot().getLongitude());
+                    intent.putExtra("expr", this.viewModel.getParkingSpot().getExpiresAt());
+                    getActivity().startService(intent);
+                }
             }
 
         });
@@ -225,25 +234,24 @@ public class NewParkingSpotFragment extends Fragment {
      * Starts the parking clock configuration
      */
     private void addClock() {
-        Calendar cal_now = Calendar.getInstance();
-        Calendar calAlarm = (Calendar) cal_now.clone();
-        SharedPreferences pref_minutes = PreferenceManager.getDefaultSharedPreferences(this.getContext());
-        String minutes_string = pref_minutes.getString("pref_key_set_parking_meter", "");
-        int minutes_value;
-        if (minutes_string != "Auto" || minutes_string != null) {
-            minutes_value = Integer.parseInt(minutes_string);
+        Calendar calNow = Calendar.getInstance();
+        Calendar calAlarm = (Calendar) calNow.clone();
+
+        int minutesValue;
+        if (minutesReminderPreference != null && !minutesReminderPreference.equals("Auto")) {
+            minutesValue = Integer.parseInt(minutesReminderPreference);
         } else {
-            minutes_value = 0;
+            minutesValue = 0;
         }
         //Set up TimePickerDialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), (timePicker, hourOfDay, minutes) -> {
             calAlarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            calAlarm.set(Calendar.MINUTE, minutes - minutes_value);
+            calAlarm.set(Calendar.MINUTE, minutes - minutesValue);
             calAlarm.set(Calendar.SECOND, 0);
             calAlarm.set(Calendar.MILLISECOND, 0);
 
 
-            if (calAlarm.compareTo(cal_now) <= 0) {
+            if (calAlarm.compareTo(calNow) <= 0) {
                 calAlarm.add(Calendar.DATE, 1);
             }
             //Save Time in ViewModel/ParkingSpot

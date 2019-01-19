@@ -1,7 +1,6 @@
 package de.uni_oldenburg.carfinder.activities;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,7 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -67,9 +65,9 @@ import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver
 import de.uni_oldenburg.carfinder.location.geocoding.FetchAddressIntentService;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
-import de.uni_oldenburg.carfinder.places.GooglePlaces;
-import de.uni_oldenburg.carfinder.places.PlacesResult;
-import de.uni_oldenburg.carfinder.places.Result;
+import de.uni_oldenburg.carfinder.web.places.GooglePlaces;
+import de.uni_oldenburg.carfinder.web.places.PlacesResult;
+import de.uni_oldenburg.carfinder.web.places.Result;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.util.FileLogger;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
@@ -77,7 +75,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO: Refactoring of parking meter stuff
 //TODO: Delete Button in DetailsView doesnt work
 //TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
@@ -88,6 +85,7 @@ import retrofit2.Response;
 //TODO: Parking time under name field not set
 //TODO: Notes cannot be edited twice
 //TODO: Set marker on park, remove on delete
+//TODO: Remove Alarm on delete of parking spot.
 
 //TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {

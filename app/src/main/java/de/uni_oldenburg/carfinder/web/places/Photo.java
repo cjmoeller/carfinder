@@ -1,5 +1,5 @@
 
-package de.uni_oldenburg.carfinder.places;
+package de.uni_oldenburg.carfinder.web.places;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
