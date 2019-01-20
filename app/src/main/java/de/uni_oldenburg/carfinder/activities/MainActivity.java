@@ -77,14 +77,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
-//TODO: Animations
-//TODO: Dialog, when parking meter expired
 //TODO: Fix notification bug
 //TODO: Permissions Bug
 //TODO: Parking time under name field not set
 //TODO: Notes cannot be edited twice
+//TODO: Photo accidentially stored, if photo process not completed
 //TODO: Set marker on park, remove on delete
 //TODO: Remove Alarm on delete of parking spot.
 
