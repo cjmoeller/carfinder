@@ -54,6 +54,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PermissionChecker;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -65,17 +66,17 @@ import de.uni_oldenburg.carfinder.location.geocoding.AddressStringResultReceiver
 import de.uni_oldenburg.carfinder.location.geocoding.FetchAddressIntentService;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
-import de.uni_oldenburg.carfinder.web.places.GooglePlaces;
-import de.uni_oldenburg.carfinder.web.places.PlacesResult;
-import de.uni_oldenburg.carfinder.web.places.Result;
+import de.uni_oldenburg.carfinder.util.AlarmExpiredDialogFragment;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.util.FileLogger;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
+import de.uni_oldenburg.carfinder.web.places.GooglePlaces;
+import de.uni_oldenburg.carfinder.web.places.PlacesResult;
+import de.uni_oldenburg.carfinder.web.places.Result;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO: Delete Button in DetailsView doesnt work
 //TODO: onPause onResume in MainActivity
 //TODO: Update main activity when user deletes current parking spot in history view.
 //TODO: Animations
@@ -125,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 R.drawable.parking);
         publicParkingIcon = Bitmap.createScaledBitmap(
                 publicParkingIcon, 100, 100, false);
+        Log.d(Constants.LOG_TAG, getIntent().toString());
 
         //MainActivity was started from "automatically detected parking spot" notification.
         if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
@@ -143,6 +145,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.viewModel.getUpdatingPosition().postValue(false);
 
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else if (getIntent().getBooleanExtra(Constants.ALARM_EXPIRED_INTENT, false)){
+            Log.d(Constants.LOG_TAG, "Intent identified!");
+            FragmentManager fm = getSupportFragmentManager();
+            AlarmExpiredDialogFragment editNameDialogFragment = AlarmExpiredDialogFragment.newInstance("");
+            editNameDialogFragment.show(fm, "fragment_edit_name");
+
         }
 
 
@@ -310,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (item.getItemId()) {
             case R.id.action_history:
                 Intent intentHistory = new Intent(this, HistoryActivity.class);
-                startActivity(intentHistory);
+                startActivityForResult(intentHistory, Constants.REQUEST_HISTORY_STATE);
                 return true;
 
             case R.id.action_settings:
@@ -340,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 displaySurroundingSpots();
             }
         }
+
 
     }
 
@@ -394,6 +403,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void loadNewParkingSpotFragment() {
         if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            if(this.currentMarker != null)
+                this.currentMarker.remove();
             newParkingSpotFragment = new NewParkingSpotFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
         }

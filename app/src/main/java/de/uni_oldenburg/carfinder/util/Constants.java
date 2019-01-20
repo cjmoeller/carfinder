@@ -19,14 +19,12 @@ public class Constants {
     public static final String EXTRA_PARKING_SPOT = "PARKING_SPOT_EXTRA";
     public static final String MAP_SHARE_URL = "https://www.google.com/maps/search/?api=1&query=";
     public static final String ARGUMENT_SPOT_LIST = "arg-spots";
-    public static final int RC_SIGN_IN = 20;
     public static final int ALARM_REQUEST_CODE = 21;
     public static final int PARKING_METER_PREFERENCE_ENTRIES = 6;
     public static final String EXTRA_LOCATION_MODE = "LOCATION_MODE_EXTRA";
     public static final int LOCATION_MODE_NORMAL = 0;
     public static final int LOCATION_MODE_ENHANCED = 1;
     public static final int LOCATION_MODE_PERSIST_DIRECTLY = 2;
-    public static final int WALKINGSPEED_PER_MINUTE = 60;
-    public static final String OPEN_ROUTE_SERVICE_ADRESSE = "https://api.openrouteservice.org/directions?api_key=5b3ce3597851110001cf62488bed2386bc4d46688cf421909215b916";
-    public static final String OPEN_ROUTE_SERVICE_MOVEMENT = "foot_walking";
+    public static final int REQUEST_HISTORY_STATE = 22;
+    public static final String ALARM_EXPIRED_INTENT = "ALARM_EXTRA";
 }

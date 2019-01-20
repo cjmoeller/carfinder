@@ -34,12 +34,14 @@
     <string name="settings_desc_bldevice">Wählen Sie das BT-Gerät ihres Autos.</string>
     <string name="settings_tl_bldevice">Bluetooth Gerät</string>
     <string name="dialog_ok">Okay</string>
-    <string name="dialog_enter_note">Enter a note:</string>
+    <string name="dialog_enter_note">Notiz eingeben:</string>
     <string name="display_more_information">"Tippen Sie auf ein Element aus der Liste um Details anzuzeigen. "</string>
-    <string name="notify_park_clock">Your Parking Meter is expired!</string>
+    <string name="notify_park_clock">Die Parkuhr ist abgelaufen!</string>
     <string name="parking_meter_set">Parkuhr wurde gesetzt auf:</string>
     <string name="parking_meter_expires">Parkuhr gesetzt für: </string>
     <string name="parking_meter_not_set">Parkuhr nicht vorhanden.</string>
     <string name="pref_desc_enhanced">Wirkt sich ggf. auf Akkulaufzeit aus.</string>
     <string name="pref_title_enhanced">Verbesserte Autodetektion (experimentell)</string>
+    <string name="swipe_left_to_delete">Nach links wischen zum löschen.</string>
+    <string name="watch_out">Achtung!</string>
 </resources>

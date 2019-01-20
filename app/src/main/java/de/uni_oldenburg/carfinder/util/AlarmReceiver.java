@@ -1,6 +1,5 @@
 package de.uni_oldenburg.carfinder.util;
 
-import android.app.Application;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,7 +19,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         vib.vibrate(1000);
 
         Intent mainIntent = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainIntent, 0);
+        mainIntent.putExtra(Constants.ALARM_EXPIRED_INTENT, true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, mainIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.car)

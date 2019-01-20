@@ -12,11 +12,9 @@ import java.util.Date;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.util.PhotoUtils;
-import de.uni_oldenburg.carfinder.viewmodels.HistoryViewModel;
 
 public class DetailsFragment extends Fragment {
 
@@ -58,7 +56,7 @@ public class DetailsFragment extends Fragment {
     public void displayData() {
 
         Date currentDate = new Date(data.getTimestamp());
-        String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate) + " Uhr";
+        String dateString = new SimpleDateFormat("dd.MM.yy, HH:mm").format(currentDate);
 
         if (this.data.getExpiresAt() != -1) {
             Date parkingMeter = new Date(this.data.getExpiresAt());
@@ -69,7 +67,7 @@ public class DetailsFragment extends Fragment {
             this.parkingMeter.setText(getString(R.string.parking_meter_not_set));
         }
 
-        this.addedTime.setText(getString(R.string.added_on) + dateString);
+        this.addedTime.setText(getString(R.string.added_on)+ " " + dateString);
         if (!data.getDescription().equals(getString(R.string.add_note)))
             this.notes.setText(data.getDescription());
         else
@@ -79,7 +77,6 @@ public class DetailsFragment extends Fragment {
             if (data.getImageLocation() != null) //TODO: check if image exists
                 PhotoUtils.loadFileIntoImageView(DetailsFragment.this.picture, data.getImageLocation());
             else {
-
                 imageDetails.setVisibility(View.GONE);
             }
         });

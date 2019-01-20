@@ -56,7 +56,6 @@ public class DetailsActivity extends AppCompatActivity {
             @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
             public void detailsFragmentStarted() {
                 finalDetails.setData(DetailsActivity.this.viewModel.getData());
-
             }
         });
 

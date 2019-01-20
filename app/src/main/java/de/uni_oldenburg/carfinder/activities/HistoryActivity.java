@@ -128,4 +128,6 @@ public class HistoryActivity extends AppCompatActivity implements HistoryFragmen
             startActivity(intentDetails);
         }
     }
+
+
 }

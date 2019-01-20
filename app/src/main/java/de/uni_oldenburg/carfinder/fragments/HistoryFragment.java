@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;

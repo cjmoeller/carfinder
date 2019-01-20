@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import java.util.List;
 
 import androidx.arch.core.util.Function;
+import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 import de.uni_oldenburg.carfinder.util.Constants;
 
@@ -65,5 +66,9 @@ public class ParkingSpotDatabaseManager {
     public static void getAllParkingSpots(final Context context, Function<List<ParkingSpot>, Void> callback) {
         LoadParkingSpotsTask task = new LoadParkingSpotsTask(context, callback);
         task.execute();
+    }
+
+    public static LiveData<ParkingSpot> getParkingSpot(long id, Context ctx){
+        return ParkingSpotDatabaseManager.getDatabase(ctx).parkingSpotDao().getParkingSpotById(id);
     }
 }

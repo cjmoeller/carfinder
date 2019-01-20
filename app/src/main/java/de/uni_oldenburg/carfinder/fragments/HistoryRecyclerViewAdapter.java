@@ -1,5 +1,6 @@
 package de.uni_oldenburg.carfinder.fragments;
 
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -18,7 +19,6 @@ import java.util.List;
 /**
  * {@link RecyclerView.Adapter} that can display a {@link ParkingSpot} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
- * TODO: Replace the implementation with code for your data type.
  */
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder> {
 
@@ -55,7 +55,7 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
         });
     }
 
-    public void removeItemAt(int index){
+    public void removeItemAt(int index) {
         mValues.remove(index);
         this.notifyItemRemoved(index);
     }
@@ -74,6 +74,8 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
         public ViewHolder(View view) {
             super(view);
+            TooltipCompat.setTooltipText(view, view.getContext().getString(R.string.swipe_left_to_delete));
+
             mView = view;
             historyAddress = view.findViewById(R.id.history_address);
             historyDate = view.findViewById(R.id.historyDate);
