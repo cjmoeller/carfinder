@@ -43,4 +43,5 @@
     <string name="pref_title_enhanced">Enhanced auto-detection (experimental)</string>
     <string name="swipe_left_to_delete">Swipe left to delete.</string>
     <string name="watch_out">Watch out!</string>
+    <string name="create_parked_time">"Parked: "</string>
 </resources>

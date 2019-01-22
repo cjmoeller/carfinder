@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +26,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
@@ -48,6 +51,7 @@ public class NewParkingSpotFragment extends Fragment {
     private TextView newLatLong;
     private TextView notes;
     private TextView clockTextView;
+    private TextView createDate;
     private Button startParkingButton;
     private CardView clockCard;
     private ImageView pictureImageView;
@@ -84,8 +88,13 @@ public class NewParkingSpotFragment extends Fragment {
         newLatLong = getActivity().findViewById(R.id.newLatLon);
         notes = getActivity().findViewById(R.id.textViewNoteNew);
 
+        createDate = getActivity().findViewById(R.id.createDate);
+
         startParkingButton = getActivity().findViewById(R.id.startParkingButton);
 
+        Date parkingMeter = new Date();
+        String currentTime = new SimpleDateFormat("dd.MM.yy, HH:mm").format(parkingMeter);
+        createDate.setText(getString(R.string.create_parked_time) + currentTime);
 
         startParkingButton.setOnClickListener(v -> {
             SharedPreferences prefMinutes = PreferenceManager.getDefaultSharedPreferences(this.getContext());
@@ -149,6 +158,7 @@ public class NewParkingSpotFragment extends Fragment {
 
         notesImageView.setClickable(true);
         notesImageView.setOnClickListener(v -> addNote());
+        notes.setOnClickListener(v -> addNote());
 
         clockCard.setClickable(true);
         clockCard.setOnClickListener(v -> addClock());
@@ -175,6 +185,8 @@ public class NewParkingSpotFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             PhotoUtils.loadFileIntoImageView(this.pictureImageView, this.viewModel.getParkingSpot().getImageLocation());
+        } else {
+            this.viewModel.getParkingSpot().setImageLocation(null);
         }
     }
 
@@ -190,7 +202,8 @@ public class NewParkingSpotFragment extends Fragment {
                 photoFile = PhotoUtils.createImageFile(getActivity());
                 this.viewModel.getParkingSpot().setImageLocation(photoFile.getAbsolutePath());
             } catch (IOException ex) {
-                return; //TODO: handle
+                Log.e(Constants.LOG_TAG, "Error while starting camera:" + ex.getLocalizedMessage());
+                return;
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {

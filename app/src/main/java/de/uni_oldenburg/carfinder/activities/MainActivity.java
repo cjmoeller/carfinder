@@ -79,14 +79,8 @@ import retrofit2.Response;
 
 //TODO: Update main activity when user deletes current parking spot in history view.
 //TODO: Fix notification bug
-//TODO: Permissions Bug
-//TODO: Parking time under name field not set
-//TODO: Notes cannot be edited twice
-//TODO: Photo accidentially stored, if photo process not completed
-//TODO: Set marker on park, remove on delete
 //TODO: Remove Alarm on delete of parking spot.
 
-//TODO: optional: bike support/ multiple cars
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
@@ -387,6 +381,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void loadExistingParkingSpotFragment() {
         if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            if(this.currentMarker != null)
+                this.currentMarker.remove();
+            displayMarkerOnMap(MainActivity.this.viewModel.getParkingSpot().getLatitude(), MainActivity.this.viewModel.getParkingSpot().getLongitude(), this.viewModel.getParkingSpot().getName());
             this.progressBar.setVisibility(View.INVISIBLE);
             if (this.fusedLocationClient != null) //don't update Position if user has parked
                 this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
@@ -514,12 +511,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //When everything is loaded: display the current parking spot, if available
                 if (viewModel.getCurrentPositionLon().getValue() != null) {
                     if (this.viewModel.isParkingSpotSaved())
-                        displayMarkerOnMap(MainActivity.this.viewModel.getParkingSpot().getLatitude(), MainActivity.this.viewModel.getParkingSpot().getLongitude(), this.viewModel.getParkingSpot().getName());
+                        displayMarkerOnMap(this.viewModel.getParkingSpot().getLatitude(), this.viewModel.getParkingSpot().getLongitude(), this.viewModel.getParkingSpot().getName());
                 }
 
                 //Load surrounding parking spots into the map.
                 SharedPreferences sharedPreferences =
-                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                        androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
                 Boolean showSpots = sharedPreferences.getBoolean("pref_key_surr_spots", false);
 
                 if (showSpots) {
