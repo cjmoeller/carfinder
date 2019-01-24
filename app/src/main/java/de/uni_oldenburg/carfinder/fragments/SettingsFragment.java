@@ -71,7 +71,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
         earlierAlarm.setEntries(entries_parking);
         earlierAlarm.setEntryValues(values_parking);
-
+        earlierAlarm.setValueIndex(2); // set default value on 10 min
 
         //Bluetooth-Settings
         MultiSelectListPreference bluetoothDevices = (MultiSelectListPreference) findPreference("pref_key_bluetooth_device");

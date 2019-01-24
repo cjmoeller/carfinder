@@ -15,6 +15,8 @@ import de.uni_oldenburg.carfinder.location.TimePickerLocationService;
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        //
         Vibrator vib = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
         vib.vibrate(1000);
 
