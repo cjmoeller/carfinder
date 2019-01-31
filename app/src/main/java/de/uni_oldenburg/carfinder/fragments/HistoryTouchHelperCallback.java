@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
+import de.uni_oldenburg.carfinder.util.DeleteStateHelper;
 
 /**
  * Used to implement delete on swipe.
@@ -32,6 +33,8 @@ public class HistoryTouchHelperCallback extends SimpleCallback {
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         if (viewHolder instanceof HistoryRecyclerViewAdapter.ViewHolder) {
             ParkingSpotDatabaseManager.deleteParkingSpot(((HistoryRecyclerViewAdapter.ViewHolder) viewHolder).mItem, ctx);
+            if(((HistoryRecyclerViewAdapter.ViewHolder) viewHolder).mItem.isCurrentlyUsed())
+                DeleteStateHelper.getInstance().setDeletedCurrentSpot(true);
             adapter.removeItemAt(viewHolder.getAdapterPosition());
         }
     }

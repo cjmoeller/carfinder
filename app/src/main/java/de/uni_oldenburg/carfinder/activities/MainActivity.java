@@ -1,6 +1,7 @@
 package de.uni_oldenburg.carfinder.activities;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -68,6 +69,7 @@ import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.AlarmExpiredDialogFragment;
 import de.uni_oldenburg.carfinder.util.Constants;
+import de.uni_oldenburg.carfinder.util.DeleteStateHelper;
 import de.uni_oldenburg.carfinder.util.FileLogger;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 import de.uni_oldenburg.carfinder.web.places.GooglePlaces;
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             this.viewModel.getUpdatingPosition().postValue(false);
 
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else if (getIntent().getBooleanExtra(Constants.ALARM_EXPIRED_INTENT, false)){
+        } else if (getIntent().getBooleanExtra(Constants.ALARM_EXPIRED_INTENT, false)) {
             Log.d(Constants.LOG_TAG, "Intent identified!");
             FragmentManager fm = getSupportFragmentManager();
             AlarmExpiredDialogFragment editNameDialogFragment = AlarmExpiredDialogFragment.newInstance("");
@@ -341,6 +343,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
+        //Current Parking Spot has been deleted.
+        if (DeleteStateHelper.getInstance().isDeletedCurrentSpot()) {
+            viewModel.setParkingSpotSaved(false);
+            viewModel.getParkingSpot().setImageLocation(null);
+            viewModel.getParkingSpot().setExpiresAt(-1);
+            this.loadNewParkingSpotFragment();
+            this.displayLocation();
+        }
+
 
     }
 
@@ -381,7 +392,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void loadExistingParkingSpotFragment() {
         if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-            if(this.currentMarker != null)
+            if (this.currentMarker != null)
                 this.currentMarker.remove();
             displayMarkerOnMap(MainActivity.this.viewModel.getParkingSpot().getLatitude(), MainActivity.this.viewModel.getParkingSpot().getLongitude(), this.viewModel.getParkingSpot().getName());
             this.progressBar.setVisibility(View.INVISIBLE);
@@ -398,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      */
     public void loadNewParkingSpotFragment() {
         if (this.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
-            if(this.currentMarker != null)
+            if (this.currentMarker != null)
                 this.currentMarker.remove();
             newParkingSpotFragment = new NewParkingSpotFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.stateFragmentContainer, newParkingSpotFragment).commit();
