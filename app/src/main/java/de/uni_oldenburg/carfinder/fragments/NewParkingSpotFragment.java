@@ -258,12 +258,13 @@ public class NewParkingSpotFragment extends Fragment {
         }
         //Set up TimePickerDialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), (timePicker, hourOfDay, minutes) -> {
+            //Create calendar-entry with values from TimePicker
             calAlarm.set(Calendar.HOUR_OF_DAY, hourOfDay);
             calAlarm.set(Calendar.MINUTE, minutes - minutesValue);
             calAlarm.set(Calendar.SECOND, 0);
             calAlarm.set(Calendar.MILLISECOND, 0);
 
-
+            //if selected time is before current time it will be handled as time of the next day
             if (calAlarm.compareTo(calNow) <= 0) {
                 calAlarm.add(Calendar.DATE, 1);
             }
@@ -277,6 +278,7 @@ public class NewParkingSpotFragment extends Fragment {
 
     }
 
+    //Function to set the alarm with alarmmanager
     private void setAlarm(Calendar targetCal) {
         Intent intent = new Intent(getActivity().getBaseContext(), AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity().getBaseContext(), Constants.ALARM_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
