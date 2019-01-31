@@ -1,7 +1,6 @@
 package de.uni_oldenburg.carfinder.activities;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -494,7 +493,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (this.progressBar.getVisibility() == View.VISIBLE && !this.viewModel.isParkingSpotSaved()) {
             //First time the position was received
-            this.progressBar.setVisibility(View.INVISIBLE);
+            this.runOnUiThread(() -> this.progressBar.setVisibility(View.INVISIBLE));
+
             this.loadNewParkingSpotFragment();
         }
 
