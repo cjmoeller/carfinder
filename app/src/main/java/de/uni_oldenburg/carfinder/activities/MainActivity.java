@@ -350,6 +350,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             viewModel.getParkingSpot().setExpiresAt(-1);
             this.loadNewParkingSpotFragment();
             this.displayLocation();
+            DeleteStateHelper.getInstance().setDeletedCurrentSpot(false);
         }
 
 
