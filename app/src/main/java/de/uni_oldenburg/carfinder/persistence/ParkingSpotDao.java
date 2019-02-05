@@ -25,6 +25,9 @@ public interface ParkingSpotDao {
     @Delete
     void deleteParkingSpots(ParkingSpot... parkingSpots);
 
+    @Query("update parking_spots set isCurrentlyUsed = 0")
+    void archiveAllSpots();
+
     @Query("select * from parking_spots")
     List<ParkingSpot> loadAllParkingSpots();
 

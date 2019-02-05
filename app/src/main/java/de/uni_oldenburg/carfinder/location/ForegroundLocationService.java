@@ -161,13 +161,10 @@ public class ForegroundLocationService extends Service {
 
     @Override
     public void onDestroy() {
-        FileLogger.getInstance().log(new Date().toString() + ": onDestroy() called.");
 
         Location loc = GeoUtils.getTransitionLocation(locationList);
-        FileLogger.getInstance().log(new Date().toString() + ": Location is: "+ loc.toString());
 
         Address address = this.getAddressFromLocation(loc);
-        FileLogger.getInstance().log(new Date().toString() + ": Adress: " + address.toString());
 
         ArrayList<String> addressFragments = new ArrayList<>();
 
@@ -201,7 +198,7 @@ public class ForegroundLocationService extends Service {
 
             } else {
                 ParkingSpot newSpot = new ParkingSpot(System.currentTimeMillis(), "Parkplatz", "Hinzugefügt durch Wearable-Erweiterung.", null, true, -1, loc.getLatitude(), loc.getLongitude(), addressString);
-                ParkingSpotDatabaseManager.insertParkingSpot(newSpot, input -> null, this.getApplicationContext()); //TODO: Take care that this is the only currently used Parking spot.
+                ParkingSpotDatabaseManager.insertParkingSpot(newSpot, input -> null, this.getApplicationContext());
             }
         }
 

@@ -82,7 +82,6 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         ArrayList<BluetoothDevice> pairedDevices = new ArrayList<>(bluetoothAdapter.getBondedDevices());
-        //TODO: Check if bluetooth on. When its not ask the user to turn it on.
         if (pairedDevices.size() > 0) {
             // There are paired devices. Get the name and address of each paired device.
             String[] entries = new String[pairedDevices.size()];

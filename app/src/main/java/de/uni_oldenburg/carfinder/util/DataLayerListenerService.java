@@ -22,14 +22,6 @@ public class DataLayerListenerService extends WearableListenerService {
             Log.d(TAG, "onDataChanged: " + dataEvents);
         }
 
-
-        // Loop through the events and send a message
-        // to the node that created the data item.
-        for (DataEvent event : dataEvents) {
-            Uri uri = event.getDataItem().getUri();
-
-
-        }
     }
 
     @Override

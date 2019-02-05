@@ -28,6 +28,7 @@ public class ParkingSpotDatabaseManager {
         AsyncTask task = new AsyncTask<Object, Object, Long>() {
             @Override
             protected Long doInBackground(Object[] objects) {
+                ParkingSpotDatabaseManager.getDatabase(context).parkingSpotDao().archiveAllSpots();
                 return ParkingSpotDatabaseManager.getDatabase(context).parkingSpotDao().insertParkingSpot(parkingSpot);
 
             }

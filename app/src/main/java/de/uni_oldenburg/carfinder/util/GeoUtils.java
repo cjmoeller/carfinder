@@ -13,7 +13,7 @@ public class GeoUtils {
      * @param locations
      * @return
      */
-    public static Location getTransitionLocation(List<Location> locations) { //TODO: check if getSpeed() returns 0
+    public static Location getTransitionLocation(List<Location> locations) {
         if (locations.size() == 0)
             return null;
         if (locations.size() < 2)

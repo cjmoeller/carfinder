@@ -69,7 +69,7 @@ public class NewParkingSpotFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         viewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
-        this.viewModel.getParkingSpot().setId(0); //Needed to tell room that it should auto generate an Id for a new spot TODO: Do that as a callback of "Delete Parking Spot"
+        this.viewModel.getParkingSpot().setId(0); //Needed to tell room that it should auto generate an Id for a new spot
 
         return inflater.inflate(R.layout.fragment_new, container, false);
     }

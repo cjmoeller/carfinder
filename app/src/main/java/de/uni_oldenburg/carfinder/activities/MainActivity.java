@@ -78,10 +78,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-//TODO: Update main activity when user deletes current parking spot in history view.
-//TODO: Fix notification bug
-//TODO: Remove Alarm on delete of parking spot.
-
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
@@ -94,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Bitmap publicParkingIcon;
     private Marker currentMarker;
 
-    //TODO: make this nicer
     private boolean initializedOwnPosition = false;
     private boolean userSetMode = false;
 
@@ -535,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     displaySurroundingSpots();
                 }
 
-                //Zoom to own Location TODO: Only in no parking spot state
+                //Zoom to own Location
                 if (!this.viewModel.isParkingSpotSaved()) {
                     LatLng ownPosition = new LatLng(this.viewModel.getCurrentPositionLat().getValue(), this.viewModel.getCurrentPositionLon().getValue());
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ownPosition, Constants.DEFAULT_ZOOM));

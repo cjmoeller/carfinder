@@ -4,25 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.android.gms.wearable.DataClient;
-import com.google.android.gms.wearable.DataItem;
 import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.PutDataMapRequest;
-import com.google.android.gms.wearable.PutDataRequest;
 import com.google.android.gms.wearable.Wearable;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.NonNull;
 import androidx.wear.activity.ConfirmationActivity;
 
 public class MainActivity extends WearableActivity {

@@ -34,7 +34,7 @@ public class GooglePlaces {
             HttpUrl originalHttpUrl = original.url();
 
             HttpUrl url = originalHttpUrl.newBuilder()
-                    .addQueryParameter("key", "AIzaSyD3T_RlOwz_oWjdH4LtQHMdKfRT8Nq_oCA") //TODO: HIDEME
+                    .addQueryParameter("key", "AIzaSyD3T_RlOwz_oWjdH4LtQHMdKfRT8Nq_oCA") //could be hidden better
                     .build();
 
             // Request customization: add request headers

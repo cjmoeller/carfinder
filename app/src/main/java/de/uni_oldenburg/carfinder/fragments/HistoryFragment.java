@@ -97,7 +97,6 @@ public class HistoryFragment extends Fragment {
      * Interface to communicate with activity
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(ParkingSpot item);
     }
 }

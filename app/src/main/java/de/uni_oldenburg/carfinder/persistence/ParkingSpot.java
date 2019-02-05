@@ -145,4 +145,13 @@ public class ParkingSpot implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public ParkingSpot clone() {
+        ParkingSpot result = new ParkingSpot(this.timestamp, this.name, this.description,
+                this.imageLocation, this.isCurrentlyUsed, this.expiresAt, this.latitude,
+                this.longitude, this.address);
+        result.setId(this.getId());
+        return result;
+    }
+
 }

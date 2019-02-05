@@ -81,9 +81,9 @@ public class ExistingParkingSpotFragment extends Fragment {
         deleteSpot = getActivity().findViewById(R.id.deleteSpot);
         deleteSpot.setOnClickListener(v -> {
             viewModel.setParkingSpotSaved(false);
+            ParkingSpotDatabaseManager.archiveParkingSpot(this.viewModel.getParkingSpot().clone(), getContext()); //Cloning needed for async process.
             viewModel.getParkingSpot().setImageLocation(null);
             viewModel.getParkingSpot().setExpiresAt(-1);
-            ParkingSpotDatabaseManager.archiveParkingSpot(this.viewModel.getParkingSpot(), getContext());
             Activity parentActivity = getActivity();
             if (parentActivity instanceof MainActivity) {
                 ((MainActivity) parentActivity).loadNewParkingSpotFragment();

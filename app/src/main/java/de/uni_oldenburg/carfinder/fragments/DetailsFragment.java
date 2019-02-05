@@ -86,7 +86,7 @@ public class DetailsFragment extends Fragment {
             this.notes.setText("-");
 
         this.picture.post(() -> {
-            if (data.getImageLocation() != null) //TODO: check if image exists
+            if (data.getImageLocation() != null)
                 PhotoUtils.loadFileIntoImageView(DetailsFragment.this.picture, data.getImageLocation());
             else {
                 imageDetails.setVisibility(View.GONE);
