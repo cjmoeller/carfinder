@@ -8,6 +8,9 @@ import androidx.appcompat.widget.Toolbar;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.fragments.SettingsFragment;
 
+/**
+ * SettingsActivity: Lädt die Settings als Fragment
+ */
 public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {

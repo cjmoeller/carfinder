@@ -44,4 +44,8 @@
     <string name="swipe_left_to_delete">Swipe left to delete.</string>
     <string name="watch_out">Watch out!</string>
     <string name="create_parked_time">"Parked: "</string>
+    <string name="intelligent_expiration">You\'d better step back!</string>
+    <string name="intelligent_expiration_desc">Start to walk back to your parking spot now to reach it before the parking meter expires!</string>
+    <string name="parking_spot">Parking Spot</string>
+    <string name="added_by_wear">Added by Wearable Extension.</string>
 </resources>

@@ -12,6 +12,9 @@ import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
 import de.uni_oldenburg.carfinder.location.TimePickerLocationService;
 
+/**
+ * Empfängt die Broadcasts von abgelaufenen Alarmen der App.
+ */
 public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

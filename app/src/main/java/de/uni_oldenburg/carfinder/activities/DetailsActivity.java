@@ -13,7 +13,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
 import androidx.lifecycle.OnLifecycleEvent;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.fragments.DetailsFragment;
@@ -21,6 +20,9 @@ import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.viewmodels.DetailsViewModel;
 
+/**
+ * DetailsActivity, zeigt die Details eines Parking-Spots in eigener Activity an.
+ */
 public class DetailsActivity extends AppCompatActivity {
 
     private DetailsViewModel viewModel;
@@ -39,7 +41,6 @@ public class DetailsActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.toolbar_details);
         setSupportActionBar(myToolbar);
 
-        // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
@@ -75,6 +76,7 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            //Intents für "Auf karte anzeigen" und "Textnachricht teilen"
             case R.id.action_map:
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + this.viewModel.getData().getLatitude() + "," + this.viewModel.getData().getLongitude() + "(" + this.viewModel.getData().getName() + ")" + "&z=" + Constants.DEFAULT_ZOOM);
                 Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);

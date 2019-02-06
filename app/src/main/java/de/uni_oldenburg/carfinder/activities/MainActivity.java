@@ -78,16 +78,21 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * MainActivity: Hauptbildschirm der App.
+ */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
 
     private GoogleMap mMap;
-    private BottomSheetBehavior<LinearLayout> sheetBehavior;
+    private BottomSheetBehavior<LinearLayout> sheetBehavior; //Zur Steuerung des unteren Menüs
     private MainViewModel viewModel;
-    private ExistingParkingSpotFragment existingParkingSpotFragment;
     private ProgressBar progressBar;
+
+    private ExistingParkingSpotFragment existingParkingSpotFragment;
     private NewParkingSpotFragment newParkingSpotFragment;
-    private Bitmap publicParkingIcon;
+
+    private Bitmap publicParkingIcon; //Custom MapMarker Icon
     private Marker currentMarker;
 
     private boolean initializedOwnPosition = false;
@@ -134,10 +139,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else if (getIntent().getBooleanExtra(Constants.ALARM_EXPIRED_INTENT, false)) {
+            //MainActivity started from "Alarm Expired" Notification
             Log.d(Constants.LOG_TAG, "Intent identified!");
             FragmentManager fm = getSupportFragmentManager();
-            AlarmExpiredDialogFragment editNameDialogFragment = AlarmExpiredDialogFragment.newInstance("");
-            editNameDialogFragment.show(fm, "fragment_edit_name");
+            AlarmExpiredDialogFragment dialogFragment = AlarmExpiredDialogFragment.newInstance("");
+            dialogFragment.show(fm, "fragment_alarm_expired");
 
         }
 
@@ -237,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.setMyLocationEnabled(true);
             mMap.getUiSettings().setMyLocationButtonEnabled(true);
 
-            mMap.setOnMapLongClickListener(latLng -> {
+            mMap.setOnMapLongClickListener(latLng -> { //Manuelles hinzufügen von Parkplätzen durch langes Touch
                 if (!this.viewModel.isParkingSpotSaved()) {
                     this.userSetMode = true;
                     this.fusedLocationClient.removeLocationUpdates(this.locationCallback);
@@ -563,6 +569,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         ParkingSpotDatabaseManager.getAllParkingSpots(this, data -> this.onParkingSpotDatabaseLoaded(data));
     }
 
+    /**
+     * Zeigt Parkplätze in der Umgebung an.
+     */
     private void displaySurroundingSpots() {
         GooglePlaces.getInstance().getNearbyParkingPlaces(MainActivity.this.viewModel.getCurrentPositionLat().getValue(), MainActivity.this.viewModel.getCurrentPositionLon().getValue(), new Callback<PlacesResult>() {
             @Override

@@ -10,6 +10,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import de.uni_oldenburg.carfinder.R;
 
+/**
+ * Zeigt einen 'Alarm abgelaufen' Dialog.
+ */
 public class AlarmExpiredDialogFragment extends DialogFragment {
 
    public AlarmExpiredDialogFragment() {

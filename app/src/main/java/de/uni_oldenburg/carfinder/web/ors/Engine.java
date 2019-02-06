@@ -4,6 +4,9 @@ package de.uni_oldenburg.carfinder.web.ors;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Auto-generated
+ */
 public class Engine {
 
     @SerializedName("version")

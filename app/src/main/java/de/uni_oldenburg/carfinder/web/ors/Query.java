@@ -4,7 +4,9 @@ package de.uni_oldenburg.carfinder.web.ors;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
+/**
+ * Auto-generated
+ */
 public class Query {
 
     @SerializedName("profile")

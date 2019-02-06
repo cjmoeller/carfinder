@@ -45,6 +45,9 @@ import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.util.PhotoUtils;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 
+/**
+ * NewParkingSpotFragment: Fragment in dem der Nutzer einen neuen Parkplatz hinzufügen kann.
+ */
 public class NewParkingSpotFragment extends Fragment {
 
     private TextView newAddress;
@@ -116,7 +119,7 @@ public class NewParkingSpotFragment extends Fragment {
                 ParkingSpotDatabaseManager.insertParkingSpot(this.viewModel.getParkingSpot(), (Long id) -> {
                     this.viewModel.getParkingSpot().setId(id);
                     return null;
-                }, getActivity());
+                }, getActivity()); //Neuen Parkplatz in die Datenbank legen
                 Activity parentActivity = getActivity();
                 if (parentActivity instanceof MainActivity) {
                     ((MainActivity) parentActivity).loadExistingParkingSpotFragment();
@@ -181,7 +184,7 @@ public class NewParkingSpotFragment extends Fragment {
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { //Für das Foto
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == Constants.REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
             PhotoUtils.loadFileIntoImageView(this.pictureImageView, this.viewModel.getParkingSpot().getImageLocation());

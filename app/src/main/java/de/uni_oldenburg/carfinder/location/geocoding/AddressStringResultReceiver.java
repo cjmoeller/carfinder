@@ -6,6 +6,9 @@ import android.os.ResultReceiver;
 import androidx.arch.core.util.Function;
 import de.uni_oldenburg.carfinder.util.Constants;
 
+/**
+ * Helper-Klasse, die als Callback für eine Adressanfrage dient.
+ */
 public class AddressStringResultReceiver extends ResultReceiver {
 
     private Function<String, Void> callback;

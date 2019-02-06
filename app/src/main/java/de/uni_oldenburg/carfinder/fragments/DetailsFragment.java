@@ -24,6 +24,9 @@ import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.util.PhotoUtils;
 
+/**
+ * DetailsFragment: Fragment, das Details zu einem Parkplatz anzeigt.
+ */
 public class DetailsFragment extends Fragment {
 
 

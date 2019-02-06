@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
@@ -24,11 +22,12 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.lifecycle.ViewModelProviders;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.activities.MainActivity;
-import de.uni_oldenburg.carfinder.persistence.ParkingSpot;
 import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
-import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.viewmodels.MainViewModel;
 
+/**
+ * ExistingParkingSpotFragment: Erweitert das DetailsFragments um eine Anzeige von Adresse, Navigations und Löschen-Button
+ */
 public class ExistingParkingSpotFragment extends Fragment {
 
     private DetailsFragment details;
@@ -94,6 +93,7 @@ public class ExistingParkingSpotFragment extends Fragment {
 
         startNavigation = getActivity().findViewById(R.id.startNavigation);
         startNavigation.setOnClickListener(v -> {
+            //Fußgänger-Navigations-Intent
             Uri gmmIntentUri = Uri.parse("google.navigation:q=" + this.viewModel.getParkingSpot().getLatitude() + "," + this.viewModel.getParkingSpot().getLongitude() + "&mode=w");
             Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
             mapIntent.setPackage("com.google.android.apps.maps");

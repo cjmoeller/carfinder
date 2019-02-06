@@ -1,10 +1,8 @@
 package de.uni_oldenburg.carfinder.util;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.util.Log;
 
-import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
@@ -12,6 +10,9 @@ import com.google.android.gms.wearable.WearableListenerService;
 import androidx.core.content.ContextCompat;
 import de.uni_oldenburg.carfinder.location.ForegroundLocationService;
 
+/**
+ * Verbindungsebene mit der Wearable-Erweiterung
+ */
 public class DataLayerListenerService extends WearableListenerService {
     private static final String TAG = "DataLayerSample";
 

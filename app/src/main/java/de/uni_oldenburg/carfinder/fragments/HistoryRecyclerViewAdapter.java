@@ -17,8 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link ParkingSpot} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * RecyclerView Adapter for the ParkingSpot Object.
  */
 public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecyclerViewAdapter.ViewHolder> {
 
@@ -48,8 +47,6 @@ public class HistoryRecyclerViewAdapter extends RecyclerView.Adapter<HistoryRecy
 
         holder.mView.setOnClickListener(v -> {
             if (null != mListener) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
                 mListener.onListFragmentInteraction(holder.mItem);
             }
         });

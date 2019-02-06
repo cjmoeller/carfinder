@@ -18,7 +18,9 @@ import androidx.core.content.ContextCompat;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.util.FileLogger;
 
-
+/**
+ * Empfängt die Aktivitätsübergangsbroadcasts und startet entsprechende Maßnahmen.
+ */
 public class ActivityTransitionChangeReceiver extends BroadcastReceiver {
 
     @Override

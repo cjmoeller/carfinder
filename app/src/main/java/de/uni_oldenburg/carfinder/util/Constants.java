@@ -22,9 +22,9 @@ public class Constants {
     public static final int ALARM_REQUEST_CODE = 21;
     public static final int PARKING_METER_PREFERENCE_ENTRIES = 6;
     public static final String EXTRA_LOCATION_MODE = "LOCATION_MODE_EXTRA";
-    public static final int LOCATION_MODE_NORMAL = 0;
-    public static final int LOCATION_MODE_ENHANCED = 1;
-    public static final int LOCATION_MODE_PERSIST_DIRECTLY = 2;
+    public static final int LOCATION_MODE_NORMAL = 0; //Normaler Modus der Hintergrundpositionsbestimmung: Benachrichtigung schicken.
+    public static final int LOCATION_MODE_ENHANCED = 1; //Erweiterter Modus: Konstantes aufzeichnen der Position
+    public static final int LOCATION_MODE_PERSIST_DIRECTLY = 2; //Keine Benachrichtigung schicken, Position direkt speichern (für Wearable extension)
     public static final int REQUEST_HISTORY_STATE = 22;
     public static final String ALARM_EXPIRED_INTENT = "ALARM_EXTRA";
 }

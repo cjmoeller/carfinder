@@ -7,6 +7,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import de.uni_oldenburg.carfinder.BuildConfig;
+
+/**
+ * Debugging file logger for testing geo-related stuff.
+ */
 public class FileLogger {
 
     private static String path = null;
@@ -25,22 +30,24 @@ public class FileLogger {
     }
 
     public void log(String text) {
-       File logFile = new File(path);
-        if (!logFile.exists()) {
+        if (BuildConfig.DEBUG) {
+            File logFile = new File(path);
+            if (!logFile.exists()) {
+                try {
+                    logFile.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             try {
-                logFile.createNewFile();
+                //BufferedWriter for performance, true to set append to file flag
+                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+                buf.append(text);
+                buf.newLine();
+                buf.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        try {
-            //BufferedWriter for performance, true to set append to file flag
-            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
-            buf.append(text);
-            buf.newLine();
-            buf.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

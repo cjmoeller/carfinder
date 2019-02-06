@@ -19,6 +19,9 @@ import androidx.preference.PreferenceFragmentCompat;
 import de.uni_oldenburg.carfinder.R;
 import de.uni_oldenburg.carfinder.util.Constants;
 
+/**
+ * SettingsFragment: Implementiert die Einstellungen der App.
+ */
 public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -30,7 +33,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if(!autoMode.isChecked()){
             enhancedAutoMode.setEnabled(false);
         }
-        autoMode.setOnPreferenceChangeListener((preference, newValue) -> {
+        autoMode.setOnPreferenceChangeListener((preference, newValue) -> { //Nur anzeigen, wenn normaler Modus aktiv
             if (newValue.equals(Boolean.FALSE)) {
                 enhancedAutoMode.setEnabled(false);
                 return true;

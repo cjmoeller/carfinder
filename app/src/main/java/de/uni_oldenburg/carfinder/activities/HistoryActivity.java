@@ -25,6 +25,9 @@ import de.uni_oldenburg.carfinder.persistence.ParkingSpotDatabaseManager;
 import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.viewmodels.HistoryViewModel;
 
+/**
+ * HistoryActiviy: Zeigt die Parkplatz-History in einem RecyclerView an. Unterstützt einen Master-Detail Mode auf Tablets.
+ */
 public class HistoryActivity extends AppCompatActivity implements HistoryFragment.OnListFragmentInteractionListener {
 
     private LinearLayout detailsFragmentContainer;
@@ -39,9 +42,8 @@ public class HistoryActivity extends AppCompatActivity implements HistoryFragmen
         Toolbar myToolbar = findViewById(R.id.toolbar_history);
         setSupportActionBar(myToolbar);
 
-        // Get a support ActionBar corresponding to this toolbar
         ActionBar ab = getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayHomeAsUpEnabled(true); //Up-Navigation
 
         detailsFragmentContainer = findViewById(R.id.detailsHistoryFragmentContainer);
 
@@ -85,7 +87,7 @@ public class HistoryActivity extends AppCompatActivity implements HistoryFragmen
         if (this.viewModel.getSelectedParkingSpot() == null)
             return super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
-
+            //Für den Master-Detail mode:
             case R.id.action_map:
                 Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + this.viewModel.getSelectedParkingSpot().getLatitude() + "," +
                         this.viewModel.getSelectedParkingSpot().getLongitude() + "(" + this.viewModel.getSelectedParkingSpot().getName() + ")" + "&z=" + Constants.DEFAULT_ZOOM);

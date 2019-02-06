@@ -21,10 +21,7 @@ import de.uni_oldenburg.carfinder.util.Constants;
 import de.uni_oldenburg.carfinder.viewmodels.HistoryViewModel;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * HistoryFragment: Shows a History List of Parking Spots
  */
 public class HistoryFragment extends Fragment {
 
@@ -34,7 +31,7 @@ public class HistoryFragment extends Fragment {
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
+     * fragment.
      */
     public HistoryFragment() {
 

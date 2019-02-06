@@ -17,7 +17,7 @@ import de.uni_oldenburg.carfinder.util.Constants;
 
 
 /**
- * Used to implement delete on swipe.
+ * Used to implement delete on swipe for the History Recycler View.
  */
 public class HistoryTouchHelperCallback extends SimpleCallback {
 

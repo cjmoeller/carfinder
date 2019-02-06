@@ -45,4 +45,8 @@
     <string name="swipe_left_to_delete">Nach links wischen zum löschen.</string>
     <string name="watch_out">Achtung!</string>
     <string name="create_parked_time">"Geparkt: "</string>
+    <string name="intelligent_expiration">Machen Sie sich auf dem Weg!</string>
+    <string name="intelligent_expiration_desc">Beginnen Sie den Rückweg zu ihrem Auto um rechtzeitig anzukommen.</string>
+    <string name="parking_spot">Parkplatz</string>
+    <string name="added_by_wear">Hinzugefügt durch Wearable-Erweiterung.</string>
 </resources>

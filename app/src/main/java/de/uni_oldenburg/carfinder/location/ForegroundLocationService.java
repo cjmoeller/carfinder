@@ -39,7 +39,7 @@ import de.uni_oldenburg.carfinder.util.GeoUtils;
 
 /**
  * This service is started to receive an accurate location very fast.
- * Should only be used to locate the user when an ActivityTransition is detected.
+ * Should only be used to locate the user when an ActivityTransition/BluetoothEvent is detected.
  */
 public class ForegroundLocationService extends Service {
 
@@ -176,7 +176,7 @@ public class ForegroundLocationService extends Service {
             String addressString = TextUtils.join(System.getProperty("line.separator"),
                     addressFragments);
             FileLogger.getInstance().log(new Date().toString() + ": ORSResult of ForegroundLocation was: " + addressString);
-            if (this.mode != Constants.LOCATION_MODE_PERSIST_DIRECTLY) {
+            if (this.mode != Constants.LOCATION_MODE_PERSIST_DIRECTLY) { //Enhanced Mode active
                 Intent notifyIntent = new Intent(this, MainActivity.class);
                 notifyIntent.putExtra(Constants.CREATE_NEW_ENTRY_EXTRA, true);
                 notifyIntent.putExtra(Constants.ADDRESS_EXTRA, address);
@@ -197,7 +197,7 @@ public class ForegroundLocationService extends Service {
                 notificationManager.notify(Constants.NOTIFICATION_ID_PARKING_DETECTED, mBuilder.build());
 
             } else {
-                ParkingSpot newSpot = new ParkingSpot(System.currentTimeMillis(), "Parkplatz", "Hinzugefügt durch Wearable-Erweiterung.", null, true, -1, loc.getLatitude(), loc.getLongitude(), addressString);
+                ParkingSpot newSpot = new ParkingSpot(System.currentTimeMillis(), getString(R.string.parking_spot), getString(R.string.added_by_wear), null, true, -1, loc.getLatitude(), loc.getLongitude(), addressString);
                 ParkingSpotDatabaseManager.insertParkingSpot(newSpot, input -> null, this.getApplicationContext());
             }
         }

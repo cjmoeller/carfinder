@@ -10,6 +10,9 @@ import androidx.lifecycle.LiveData;
 import androidx.room.Room;
 import de.uni_oldenburg.carfinder.util.Constants;
 
+/**
+ * Abstraktionsebene für Interaktionen mit der Datenbank.
+ */
 public class ParkingSpotDatabaseManager {
     private static AppDatabase instance;
 

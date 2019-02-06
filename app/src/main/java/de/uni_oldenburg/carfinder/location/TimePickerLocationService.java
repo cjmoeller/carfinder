@@ -27,6 +27,10 @@ import retrofit2.Response;
 
 import static com.google.android.gms.location.LocationServices.getFusedLocationProviderClient;
 
+/**
+ * TimePickerLocationService: Wird genutzt um im Hintergrund intelligent zu berechnen, wann ein Nutzer den
+ * Weg zu seinem Auto antreten sollte, um vor Ablauf der Parkuhr anzukommen.
+ */
 public class TimePickerLocationService extends Service {
 
     private FusedLocationProviderClient fusedLocationClient;
@@ -113,8 +117,8 @@ public class TimePickerLocationService extends Service {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, Constants.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.car)
-                .setContentTitle("You'd better step back!")
-                .setContentText("Start to walk back to your parking spot now to reach it before the parking meter expires!")
+                .setContentTitle(getString(R.string.intelligent_expiration))
+                .setContentText(getString(R.string.intelligent_expiration_desc))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
