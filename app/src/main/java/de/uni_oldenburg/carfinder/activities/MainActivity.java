@@ -121,31 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 publicParkingIcon, 100, 100, false);
         Log.d(Constants.LOG_TAG, getIntent().toString());
 
-        //MainActivity was started from "automatically detected parking spot" notification.
-        if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
-            //Address from the ForegroundLocationService.
-            Address address = getIntent().getParcelableExtra(Constants.ADDRESS_EXTRA);
-            ArrayList<String> addressFragments = new ArrayList<>();
-            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
-                addressFragments.add(address.getAddressLine(i));
-            }
-            String addressString = TextUtils.join(System.getProperty("line.separator"),
-                    addressFragments);
 
-            this.viewModel.getParkingSpot().setAddress(addressString);
-            this.viewModel.getParkingSpot().setLatitude(address.getLatitude());
-            this.viewModel.getParkingSpot().setLongitude(address.getLongitude());
-            this.viewModel.getUpdatingPosition().postValue(false);
-
-            this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-        } else if (getIntent().getBooleanExtra(Constants.ALARM_EXPIRED_INTENT, false)) {
-            //MainActivity started from "Alarm Expired" Notification
-            Log.d(Constants.LOG_TAG, "Intent identified!");
-            FragmentManager fm = getSupportFragmentManager();
-            AlarmExpiredDialogFragment dialogFragment = AlarmExpiredDialogFragment.newInstance("");
-            dialogFragment.show(fm, "fragment_alarm_expired");
-
-        }
 
 
         this.requestActivityTransitionUpdates(this);
@@ -329,6 +305,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onResume() {
         super.onResume();
+
+        //MainActivity was started from "automatically detected parking spot" notification.
+        if (getIntent().getBooleanExtra(Constants.CREATE_NEW_ENTRY_EXTRA, false)) {
+            //Address from the ForegroundLocationService.
+            Address address = getIntent().getParcelableExtra(Constants.ADDRESS_EXTRA);
+            ArrayList<String> addressFragments = new ArrayList<>();
+            for (int i = 0; i <= address.getMaxAddressLineIndex(); i++) {
+                addressFragments.add(address.getAddressLine(i));
+            }
+            String addressString = TextUtils.join(System.getProperty("line.separator"),
+                    addressFragments);
+
+            this.viewModel.getParkingSpot().setAddress(addressString);
+            this.viewModel.getParkingSpot().setLatitude(address.getLatitude());
+            this.viewModel.getParkingSpot().setLongitude(address.getLongitude());
+            this.viewModel.getCurrentPositionLat().setValue(address.getLatitude());
+            this.viewModel.getCurrentPositionLon().setValue(address.getLongitude());
+            this.viewModel.getCurrentPositionAddress().setValue(addressString);
+            this.progressBar.setVisibility(View.GONE);
+            this.viewModel.getUpdatingPosition().postValue(false);
+            this.loadNewParkingSpotFragment();
+
+            this.sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            getIntent().removeExtra(Constants.CREATE_NEW_ENTRY_EXTRA);
+        } else if (getIntent().getBooleanExtra(Constants.ALARM_EXPIRED_INTENT, false)) {
+            //MainActivity started from "Alarm Expired" Notification
+            Log.d(Constants.LOG_TAG, "Intent identified!");
+            FragmentManager fm = getSupportFragmentManager();
+            AlarmExpiredDialogFragment dialogFragment = AlarmExpiredDialogFragment.newInstance("");
+            dialogFragment.show(fm, "fragment_alarm_expired");
+            this.getIntent().removeExtra(Constants.ALARM_EXPIRED_INTENT);
+
+        }
+
+
         //Check if parking spot places prefs has changed:
         if (this.viewModel.getIsLoadingDone().getValue() != null && this.viewModel.getIsLoadingDone().getValue()) {
             SharedPreferences sharedPreferences =
@@ -341,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (showSpots) {
                 displaySurroundingSpots();
             }
+            this.viewModel.getUpdatingPosition().setValue(true);
         }
 
         //Current Parking Spot has been deleted.
@@ -438,32 +450,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
      * Call this method to display the current address and position in the UI.
      */
     public void displayLocation() {
+        if (this.viewModel.getUpdatingPosition().getValue()) {
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            try {
+                LocationRequest request = new LocationRequest();
+                request.setInterval(5000); // 5s interval
+                request.setFastestInterval(5000);
 
-        try {
-            LocationRequest request = new LocationRequest();
-            request.setInterval(5000); // 5s interval
-            request.setFastestInterval(5000);
+                request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-            request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                locationCallback = new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        if (locationResult == null || locationResult.getLastLocation() == null) {
+                            Log.w(Constants.LOG_TAG, "Failed to display current Location");
+                            return;
+                        }
+                        // Set the map's camera position to the current location of the device.
+                        Location lastKnownLocation = locationResult.getLastLocation();
+                        loadAddressFromLocation(lastKnownLocation);
 
-            locationCallback = new LocationCallback() {
-                @Override
-                public void onLocationResult(LocationResult locationResult) {
-                    if (locationResult == null || locationResult.getLastLocation() == null) {
-                        Log.w(Constants.LOG_TAG, "Failed to display current Location");
-                        return;
                     }
-                    // Set the map's camera position to the current location of the device.
-                    Location lastKnownLocation = locationResult.getLastLocation();
-                    loadAddressFromLocation(lastKnownLocation);
-
-                }
-            };
-            fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
-        } catch (SecurityException e) {
-            Log.e(Constants.LOG_TAG, "No GPS Permission");
+                };
+                fusedLocationClient.requestLocationUpdates(request, locationCallback, null);
+            } catch (SecurityException e) {
+                Log.e(Constants.LOG_TAG, "No GPS Permission");
+            }
         }
     }
 
@@ -545,10 +558,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
         final Observer<Boolean> positionUpdateSettingObserver = update -> {
-            if (this.viewModel.getIsLoadingDone().getValue() && update) {
-                displayLocation();
-            } else if (this.fusedLocationClient != null) {
-                fusedLocationClient.removeLocationUpdates(locationCallback);
+            if (this.viewModel.getIsLoadingDone().getValue() != null) {
+                if (this.viewModel.getIsLoadingDone().getValue() && update) {
+                    displayLocation();
+                } else if (this.fusedLocationClient != null) {
+                    fusedLocationClient.removeLocationUpdates(locationCallback);
+                }
             }
         };
         this.viewModel.getUpdatingPosition().observe(this, positionUpdateSettingObserver);

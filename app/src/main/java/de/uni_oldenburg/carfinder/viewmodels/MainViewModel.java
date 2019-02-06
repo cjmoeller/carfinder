@@ -51,6 +51,7 @@ public class MainViewModel extends ViewModel {
         isLoadingDone.addSource(isMapLoaded, value -> isLoadingDone.setValue(value && this.isPositionReady.getValue() && this.isDatabaseLoaded.getValue()));
 
         publicParkingSpots = new ArrayList<>();
+        updatingPosition.setValue(true);
 
     }
 
