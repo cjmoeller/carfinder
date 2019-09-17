@@ -1,6 +1,7 @@
 Car finder
 ============
-![](https://i.imgur.com/gdnRqzI.png | width = 200)
+<div style="text-align: center;"><img src="https://i.imgur.com/gdnRqzI.png" width="400" /></div>
+
 
 Car finder is a native android app that helps you to remember your parking spot.
 
